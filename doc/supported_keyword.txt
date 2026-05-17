@@ -1,0 +1,68 @@
+nftables                          →  XML  
+─────────────────────────────────────────────────────  
+table ip <name>                   →  node (name IP/table name)  
+chain + hook forward              →  functional_type="FIREWALL"  
+chain + hook postrouting (nat)    →  functional_type="NAT"  
+policy drop                       →  defaultAction="DENY"  
+policy accept                     →  defaultAction="ALLOW"  
+one rule                          →  one <elements>  
+accept                            →  <action>ALLOW</action>  
+drop                              →  <action>DENY</action>  
+ip saddr X                        →  <source>X</source>  
+ip daddr X                        →  <destination>X</destination>  
+tcp/udp                           →  <protocol>TCP/UDP</protocol>  
+no protocol                       →  <protocol>ANY</protocol>  
+tcp/udp sport X                   →  <src_port>X</src_port>  
+tcp/udp dport X                   →  <dst_port>X</dst_port>  
+no port                           →  <src_port>*</src_port>  
+ip saddr X masquerade (nat)       →  <nat><source>X</source></nat> 
+
+
+
+1.table & chain -> node
+
+table ip <table_name> {  
+    chain <chain_name> {  
+        type filter hook forward priority 0; policy drop;  
+        ...rules...  
+    }  
+}  
+table ip → Node's Network layer(only support IPv4)
+chain + hook forward →  FIREWALL Node
+policy drop → defaultAction="DENY"
+policy accept → defaultAction="ALLOW"
+
+2.rules -> <elements>
+
+src/dest IP
+ip saddr <addr>          # IP: 10.0.0.1  
+ip daddr <addr>          Ibid.
+ip saddr <cidr>          # CIDR: 192.168.1.0/24  
+ip daddr <cidr>          Ibid.
+  
+# protocol 
+ip protocol tcp  
+ip protocol udp  
+# 无协议声明 → ANY  
+  
+src_port/dst_port  
+tcp sport <port>  
+tcp dport <port>  
+udp sport <port>  
+udp dport <port>  
+# no port → *  
+  
+# action 
+accept                   # → ALLOW  
+drop                     # → DENY
+
+3.nat rule -> <nat> 
+table ip nat {  
+    chain postrouting {  
+        type nat hook postrouting priority 100;  
+        ip saddr <subnet> masquerade  
+        # 或  
+        ip saddr <subnet> snat to <public_ip>  
+    }  
+}  
+ip saddr <subnet> → <nat><source>subnet</source></nat>

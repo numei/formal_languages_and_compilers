@@ -1,0 +1,6 @@
+
+table ip mumei {
+    chain test1 {
+        ip saddr 40.0.0.1 ip daddr 10.0.0.3 drop
+    }
+}

@@ -1,0 +1,9 @@
+table ip filter {  
+    chain forward {  
+        type filter hook forward priority 0; policy drop;  
+  
+        ip saddr 192.168.1.0/24 ip daddr 10.0.0.1 tcp dport 53 accept  
+        ip saddr 192.168.1.0/24 ip daddr 10.0.0.1 udp dport 53 accept  
+        ip saddr 192.168.1.0/24 ip daddr 10.0.0.1 tcp dport 22 accept  
+    }  
+}

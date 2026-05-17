@@ -1,0 +1,87 @@
+import java_cup.runtime.*;
+
+
+parser code {:
+    @Override
+    public void syntax_error(Symbol cur_token) {
+        System.err.println("Syntax Error at Line " + cur_token.left + 
+                           ", Column " + cur_token.right + 
+                           ": Unexpected token '" + 
+                           (cur_token.value != null ? cur_token.value : sym.terminalNames[cur_token.sym]) + "'");
+    }
+:}
+
+// Terminals
+terminal LBRACE, RBRACE, SEMICOLON;
+terminal TABLE,ADDRESS_FAMILY;
+terminal String TABLE_NAME;
+terminal CHAIN,TYPE,TYPE_VAL, HOOK, HOOK_VAL, PRIORITY, PRIORITY_VAL, POLICY, POLICY_VAL;
+terminal String CHAIN_NAME;
+terminal IP,SADDR,DADDR,DPORT;
+terminal String IP_VAL,DPORT_VAL,PROTOCOL_VAL,ACTION_VAL;
+
+
+// Non-terminals
+non terminal FirewallElement config, tables, table, chains, chain, wrapper, rules, rule;
+
+// Grammar rules
+
+
+// TBD: support syntax error recovery and more detailed error messages
+
+// TBD: support for multiple tables and chains
+config ::= tables
+
+tables ::= /*empty*/ {: RESULT = null; :};  | tables: ts table
+         {: 
+            if (ts == null) {
+                RESULT = new FirewallElement[]{(FirewallElement) RESULT};
+            } else {
+                FirewallElement[] combined = new FirewallElement[ts.length + 1];
+                combined[0] = (FirewallElement) RESULT;
+                System.arraycopy(ts, 0, combined, 1, ts.length);
+                RESULT = combined;
+            }
+         :}
+
+table::= TABLE ADDRESS_FAMILY TABLE_NAME LBRACE chains RBRACE
+           {: RESULT = rs; :};
+
+chains::= /*empty*/ {: RESULT = null; :};  | chains: cs chain
+         {: 
+            if (cs == null) {
+                RESULT = new FirewallElement[]{(FirewallElement) RESULT};
+            } else {
+                FirewallElement[] combined = new FirewallElement[cs.length + 1];
+                combined[0] = (FirewallElement) RESULT;
+                System.arraycopy(cs, 0, combined, 1, cs.length);
+                RESULT = combined;
+            }
+         :}
+
+chain ::= CHAIN CHAIN_NAME wrapper
+         {: RESULT = rs; :};
+
+// TBD: Add rules for type, hook, priority, and policy
+wrapper ::= LBRACE TYPE TYPE_VAL HOOK HOOK_VAL  PRIORITY PRIORITY_VAL SEMICOLON POLICY POLICY_VAL:val SEMICOLON rules:rs RBRACE
+         {: 
+            RESULT = rs; 
+         :}
+
+//TBD: debug test for sematic / toXML
+rules ::= /*empty*/ {: RESULT = null; :};  | rules: rs rule
+         {: 
+            if (rs == null) {
+                RESULT = new FirewallElement[]{(FirewallElement) RESULT};
+            } else {
+                FirewallElement[] combined = new FirewallElement[rs.length + 1];
+                combined[0] = (FirewallElement) RESULT;
+                System.arraycopy(rs, 0, combined, 1, rs.length);
+                RESULT = combined;
+            }
+         :}
+
+rule ::= IP SADDR IP_VAL:src DADDR IP_VAL:dst PROTOCOL_VAL:proto DPORT PORT_VAL:dport ACTION_VAL:action
+         {: 
+            RESULT = new FirewallElement(action, src, dst, proto,dport); 
+         :};
