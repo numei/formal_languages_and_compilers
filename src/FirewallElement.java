@@ -3,9 +3,12 @@ public class FirewallElement {
     private String source;
     private String destination;
     private String protocol;
+    // TBD: support srcPort and destPort
+    private String srcPort;
     private String destPort;
 
-    public FirewallElement(String action, String src, String dst, String proto, String dPort) {
+    //TBD: support default values for optional fields, e.g., protocol and destPort
+    public FirewallElement(String action, String src, String dst,String proto, String dPort) {
         this.action = action;
         this.source = src;
         this.destination = dst;
@@ -13,7 +16,6 @@ public class FirewallElement {
         this.destPort = dPort;
     }
 
-    // Core: Manual XML generation logic (No external dependencies)
     public String toXML() {
         StringBuilder xml = new StringBuilder();
         xml.append("    <elements>\n");

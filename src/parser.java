@@ -4,6 +4,7 @@
 //----------------------------------------------------
 
 import java_cup.runtime.*;
+import java.util.List;
 import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b beta 20140226 generated parser.
@@ -29,8 +30,11 @@ public class parser extends java_cup.runtime.lr_parser {
   /** Production table. */
   protected static final short _production_table[][] = 
     unpackFromStrings(new String[] {
-    "\000\003\000\002\002\014\000\002\002\004\000\002\003" +
-    "\010" });
+    "\000\017\000\002\002\003\000\002\002\004\000\002\010" +
+    "\002\000\002\010\004\000\002\007\010\000\002\006\002" +
+    "\000\002\006\004\000\002\005\021\000\002\012\003\000" +
+    "\002\012\003\000\002\004\002\000\002\004\004\000\002" +
+    "\003\014\000\002\011\003\000\002\011\003" });
 
   /** Access to production table. */
   public short[][] production_table() {return _production_table;}
@@ -38,15 +42,28 @@ public class parser extends java_cup.runtime.lr_parser {
   /** Parse-action table. */
   protected static final short[][] _action_table = 
     unpackFromStrings(new String[] {
-    "\000\023\000\004\004\005\001\002\000\004\002\025\001" +
-    "\002\000\004\013\006\001\002\000\004\032\007\001\002" +
-    "\000\004\020\010\001\002\000\004\007\011\001\002\000" +
-    "\004\033\012\001\002\000\004\020\013\001\002\000\004" +
-    "\013\015\001\002\000\004\021\023\001\002\000\004\014" +
-    "\016\001\002\000\004\030\017\001\002\000\004\015\020" +
-    "\001\002\000\004\030\021\001\002\000\004\016\022\001" +
-    "\002\000\004\021\uffff\001\002\000\004\021\024\001\002" +
-    "\000\004\002\001\001\002\000\004\002\000\001\002" });
+    "\000\052\000\006\002\uffff\007\uffff\001\002\000\006\002" +
+    "\001\007\010\001\002\000\004\002\006\001\002\000\004" +
+    "\002\000\001\002\000\006\002\ufffe\007\ufffe\001\002\000" +
+    "\004\021\011\001\002\000\004\021\012\001\002\000\004" +
+    "\004\013\001\002\000\006\005\ufffc\010\ufffc\001\002\000" +
+    "\006\005\017\010\016\001\002\000\006\005\ufffb\010\ufffb" +
+    "\001\002\000\004\021\020\001\002\000\006\002\ufffd\007" +
+    "\ufffd\001\002\000\004\004\021\001\002\000\004\011\022" +
+    "\001\002\000\004\021\023\001\002\000\004\012\024\001" +
+    "\002\000\004\021\025\001\002\000\004\013\026\001\002" +
+    "\000\006\020\030\021\031\001\002\000\004\006\032\001" +
+    "\002\000\004\006\ufff8\001\002\000\004\006\ufff9\001\002" +
+    "\000\004\014\033\001\002\000\004\021\034\001\002\000" +
+    "\004\006\035\001\002\000\006\005\ufff7\021\ufff7\001\002" +
+    "\000\006\005\037\021\041\001\002\000\006\005\ufffa\010" +
+    "\ufffa\001\002\000\006\005\ufff6\021\ufff6\001\002\000\004" +
+    "\015\042\001\002\000\006\022\044\023\043\001\002\000" +
+    "\004\021\ufff3\001\002\000\004\021\ufff4\001\002\000\004" +
+    "\021\046\001\002\000\004\016\047\001\002\000\006\022" +
+    "\044\023\043\001\002\000\004\021\051\001\002\000\004" +
+    "\017\052\001\002\000\004\020\053\001\002\000\004\021" +
+    "\054\001\002\000\006\005\ufff5\021\ufff5\001\002" });
 
   /** Access to parse-action table. */
   public short[][] action_table() {return _action_table;}
@@ -54,13 +71,21 @@ public class parser extends java_cup.runtime.lr_parser {
   /** <code>reduce_goto</code> table. */
   protected static final short[][] _reduce_table = 
     unpackFromStrings(new String[] {
-    "\000\023\000\004\002\003\001\001\000\002\001\001\000" +
-    "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
-    "\001\001\000\002\001\001\000\002\001\001\000\004\003" +
-    "\013\001\001\000\002\001\001\000\002\001\001\000\002" +
+    "\000\052\000\006\002\004\010\003\001\001\000\004\007" +
+    "\006\001\001\000\002\001\001\000\002\001\001\000\002" +
     "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
+    "\001\000\004\006\013\001\001\000\004\005\014\001\001" +
+    "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
+    "\002\001\001\000\002\001\001\000\002\001\001\000\002" +
+    "\001\001\000\002\001\001\000\002\001\001\000\004\012" +
+    "\026\001\001\000\002\001\001\000\002\001\001\000\002" +
+    "\001\001\000\002\001\001\000\002\001\001\000\002\001" +
+    "\001\000\004\004\035\001\001\000\004\003\037\001\001" +
+    "\000\002\001\001\000\002\001\001\000\002\001\001\000" +
+    "\004\011\044\001\001\000\002\001\001\000\002\001\001" +
+    "\000\002\001\001\000\002\001\001\000\004\011\047\001" +
     "\001\000\002\001\001\000\002\001\001\000\002\001\001" +
-    "\000\002\001\001" });
+    "\000\002\001\001\000\002\001\001" });
 
   /** Access to <code>reduce_goto</code> table. */
   public short[][] reduce_table() {return _reduce_table;}
@@ -110,18 +135,88 @@ public class parser extends java_cup.runtime.lr_parser {
  Symbol s=_scanner.next_token(); Tree.push(s.toString(), 0); return s;   }
 
 
-    @Override
+    public void report_error(String message, Object info) {
+        if (info instanceof Symbol){
+            if (((Symbol)info).left != -1){
+                int line = (((Symbol)info).left);
+                int column = (((Symbol)info).right+1);
+                System.err.println(" (line "+line+", column "+column+"): "+message);
+            }
+        }
+    }
     public void syntax_error(Symbol cur_token) {
-        System.err.println("Syntax Error at Line " + cur_token.left + 
-                           ", Column " + cur_token.right + 
-                           ": Unexpected token '" + 
-                           (cur_token.value != null ? cur_token.value : sym.terminalNames[cur_token.sym]) + "'");
+
     }
 
 
 /** Cup generated class to encapsulate user supplied action code.*/
 @SuppressWarnings({"rawtypes", "unchecked", "unused"})
 class CUP$parser$actions {
+
+
+
+    public boolean isValidProto(String proto) {
+        if (proto == null)  return false;
+        return List.of("tcp", "udp", "ip").contains(proto.toLowerCase());
+    }
+    public boolean isValidPriority(String priority){
+        return List.of("raw","mangle","filter","dstnat","srcnat","security","out").contains(priority)||List.of("-300","-200","-150","-100","0","50","100","300").contains(priority);
+    }
+    public boolean isValidHook(String hook) {
+        return List.of("ingress","prerouting","input","output","postrouting","forward","egress").contains(hook);
+    }
+    public boolean isValidType(String type_val) {
+        return List.of("filter","nat","route").contains(type_val);
+    }
+    public boolean isValidTableAddressFamily(String af) {
+        return List.of("ip","inet").contains(af);
+    }
+     public boolean isValidPolicy(String policy) {
+        return List.of("drop","accept").contains(policy);
+    }
+     public boolean isValidAction(String action) {
+        return List.of("accept","drop","reject").contains(action);
+    }
+
+    public boolean isValidPort(String port) {
+        try {
+            int num = Integer.parseInt(port);
+            return num >= 0 && num <= 65535;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public boolean isValidPrefix(String prefix) {
+        try {
+            int num = Integer.parseInt(prefix);
+            return num >= 0 && num <= 32;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public boolean isValidCIDR(String cidr) {
+        String[] parts = cidr.split("/");
+        if (parts.length != 2) return false;
+        String ip = parts[0];
+        String prefix = parts[1];
+        return isValidIPAddres(ip) && isValidPrefix(prefix);
+    }
+    public boolean isValidIPAddres(String ip) {
+        String[] parts = ip.split("\\.");
+        if (parts.length != 4) return false;
+        for (String part : parts) {
+            try {
+                int num = Integer.parseInt(part);
+                if (num < 0 || num > 255) return false;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+        return true;
+    }
+
   private final parser parser;
 
   /** Constructor */
@@ -144,24 +239,28 @@ class CUP$parser$actions {
       switch (CUP$parser$act_num)
         {
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 0: // config ::= TABLE IP TABLE_NAME LBRACE CHAIN CHAIN_NAME LBRACE rule RBRACE RBRACE 
-            { parser.Tree.reduce(10,"config",0);
-              FirewallElement RESULT =null;
-		int rleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;
-		int rright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).right;
-		FirewallElement r = (FirewallElement)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-2)).value;
-		 RESULT = r; 
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("config",0, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-9)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+          case 0: // prog ::= tables 
+            { parser.Tree.reduce(1,"prog",0);
+              Config RESULT =null;
+		int tsleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int tsright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Table[] ts = (Table[])((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		
+    System.out.println("Parser Success");
+    if (ts != null) {  Config config = new Config(ts); RESULT = config; }
+    else { System.out.println("No tables defined."); }
+
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("prog",0, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 1: // $START ::= config EOF 
+          case 1: // $START ::= prog EOF 
             { 
               Object RESULT =null;
 		int start_valleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
 		int start_valright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
-		FirewallElement start_val = (FirewallElement)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		Config start_val = (Config)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
 		RESULT = start_val;
               CUP$parser$result = parser.getSymbolFactory().newSymbol("$START",0, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -170,20 +269,254 @@ class CUP$parser$actions {
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 2: // rule ::= IP SADDR IP_VAL DADDR IP_VAL DROP 
-            { parser.Tree.reduce(6,"rule",1);
-              FirewallElement RESULT =null;
-		int srcleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
-		int srcright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
-		String src = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
-		int dstleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
-		int dstright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
-		String dst = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+          case 2: // tables ::= 
+            { parser.Tree.reduce(0,"tables",0);
+              Table[] RESULT =null;
+		 RESULT = null; 
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("tables",6, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+            }
+          return CUP$parser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 3: // tables ::= tables table 
+            { parser.Tree.reduce(2,"tables",0);
+              Table[] RESULT =null;
+		int tsleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int tsright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		Table[] ts = (Table[])((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		int tleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int tright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Table t = (Table)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
 		 
-            // Map nftables 'drop' to VEREFOO 'DENY'
-            RESULT = new FirewallElement("DENY", src, dst, "ANY", "ANY"); 
+            if (ts == null) {
+                RESULT = new Table[]{(Table)t};
+            } else {
+                Table[] combined = new Table[ts.length + 1];
+                combined[ts.length] = (Table)t;
+                System.arraycopy(ts, 0, combined, 0, ts.length);
+                RESULT = combined;
+            }
          
-              CUP$parser$result = parser.getSymbolFactory().newSymbol("rule",1, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-5)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("tables",6, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+            }
+          return CUP$parser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 4: // table ::= TABLE NAME NAME LBRACE chains RBRACE 
+            { parser.Tree.reduce(6,"table",0);
+              Table RESULT =null;
+		int address_familyleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).left;
+		int address_familyright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).right;
+		String address_family = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-4)).value;
+		int nameleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
+		int nameright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
+		String name = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
+		int csleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int csright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		Chain[] cs = (Chain[])((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		 
+            if(isValidTableAddressFamily(address_family)) {
+                RESULT = new Table((String)name, (Chain[])cs);
+            } else {
+                report_error("Invalid table address family: " + address_family,parser.cur_token);
+            }
+        
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("table",5, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-5)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+            }
+          return CUP$parser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 5: // chains ::= 
+            { parser.Tree.reduce(0,"chains",0);
+              Chain[] RESULT =null;
+		 RESULT = null; 
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("chains",4, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+            }
+          return CUP$parser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 6: // chains ::= chains chain 
+            { parser.Tree.reduce(2,"chains",0);
+              Chain[] RESULT =null;
+		int csleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int csright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		Chain[] cs = (Chain[])((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		int cleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int cright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Chain c = (Chain)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		 
+            if (cs == null) {
+                RESULT = new Chain[]{(Chain)c};
+            } else {
+                Chain[] combined = new Chain[cs.length + 1];
+                combined[cs.length] = (Chain)c;
+                System.arraycopy(cs, 0, combined, 0, cs.length);
+                RESULT = combined;
+            }
+         
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("chains",4, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+            }
+          return CUP$parser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 7: // chain ::= CHAIN NAME LBRACE TYPE NAME HOOK NAME PRIORITY priority SEMICOLON POLICY NAME SEMICOLON rules RBRACE 
+            { parser.Tree.reduce(15,"chain",0);
+              Chain RESULT =null;
+		int nameleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-13)).left;
+		int nameright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-13)).right;
+		String name = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-13)).value;
+		int type_valleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-10)).left;
+		int type_valright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-10)).right;
+		String type_val = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-10)).value;
+		int hook_valleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-8)).left;
+		int hook_valright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-8)).right;
+		String hook_val = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-8)).value;
+		int priority_valleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)).left;
+		int priority_valright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)).right;
+		String priority_val = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-6)).value;
+		int policy_valleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
+		int policy_valright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
+		String policy_val = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
+		int rsleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int rsright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		FirewallElement[] rs = (FirewallElement[])((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		 
+            if(isValidType(type_val) && isValidHook(hook_val) && isValidPolicy(policy_val)) {
+                RESULT = new Chain((String)name, (String)type_val, (String)hook_val, (String)priority_val,(String)policy_val, (FirewallElement[])rs);
+            } else {
+                report_error("Invalid chain definition: " + name + " " + type_val + " " + hook_val + " " + priority_val + " " + policy_val,parser.cur_token);
+            }
+         
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("chain",3, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-14)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+            }
+          return CUP$parser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 8: // priority ::= NAME 
+            { parser.Tree.reduce(1,"priority",0);
+              String RESULT =null;
+		int nameleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int nameright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		String name = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		 
+    if(isValidPriority(name)){ RESULT=name; }
+    else { report_error("Invalid policy: " + name,parser.cur_token); }
+
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("priority",8, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+            }
+          return CUP$parser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 9: // priority ::= NUMBER 
+            { parser.Tree.reduce(1,"priority",0);
+              String RESULT =null;
+		int numberleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int numberright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Integer number = (Integer)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		 
+        if(isValidPriority(String.valueOf(number))){ RESULT=String.valueOf(number); }
+        else { report_error("Invalid policy: " + String.valueOf(number),parser.cur_token); }
+
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("priority",8, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+            }
+          return CUP$parser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 10: // rules ::= 
+            { parser.Tree.reduce(0,"rules",0);
+              FirewallElement[] RESULT =null;
+		 RESULT = null; 
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("rules",2, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+            }
+          return CUP$parser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 11: // rules ::= rules rule 
+            { parser.Tree.reduce(2,"rules",0);
+              FirewallElement[] RESULT =null;
+		int rsleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int rsright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		FirewallElement[] rs = (FirewallElement[])((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		int rleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int rright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		FirewallElement r = (FirewallElement)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		 
+            if (rs == null) {
+                RESULT = new FirewallElement[]{(FirewallElement)r};
+            } else { 
+                FirewallElement[] combined = new FirewallElement[rs.length + 1];
+                combined[rs.length] = (FirewallElement)r;
+                System.arraycopy(rs, 0, combined, 0, rs.length);
+                RESULT = combined;
+            }
+         
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("rules",2, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+            }
+          return CUP$parser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 12: // rule ::= NAME SADDR ip_address NAME DADDR ip_address NAME DPORT NUMBER NAME 
+            { parser.Tree.reduce(10,"rule",1);
+              FirewallElement RESULT =null;
+		int srcleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-7)).left;
+		int srcright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-7)).right;
+		String src = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-7)).value;
+		int dstleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).left;
+		int dstright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-4)).right;
+		String dst = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-4)).value;
+		int protoleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
+		int protoright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
+		String proto = (String)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
+		int dportleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
+		int dportright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
+		Integer dport = (Integer)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
+		int actionleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int actionright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		String action = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		 
+            if(isValidAction(action) && isValidPort(String.valueOf(dport)) && isValidProto(proto)) {
+                RESULT = new FirewallElement(action, src, dst, proto, String.valueOf(dport)); 
+            } else {
+                report_error("Invalid rule: " + src + " " + dst + " " + proto + " " + dport + " " + action,parser.cur_token);
+            }
+         
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("rule",1, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-9)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+            }
+          return CUP$parser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 13: // ip_address ::= IP_CIDR 
+            { parser.Tree.reduce(1,"ip_address",0);
+              String RESULT =null;
+		int cidrleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int cidrright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		String cidr = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		 
+            if(isValidCIDR(cidr)) {
+               RESULT = cidr;
+           } else {
+               report_error("Invalid IP address: " + cidr,parser.cur_token);
+           }
+          
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("ip_address",7, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
+            }
+          return CUP$parser$result;
+
+          /*. . . . . . . . . . . . . . . . . . . .*/
+          case 14: // ip_address ::= IP_RAW 
+            { parser.Tree.reduce(1,"ip_address",0);
+              String RESULT =null;
+		int raw_ipleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int raw_ipright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		String raw_ip = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		 
+            if(isValidIPAddres(raw_ip)) {
+               RESULT = raw_ip;
+           } else {
+               report_error("Invalid IP address: " + raw_ip,parser.cur_token);
+           }
+          
+              CUP$parser$result = parser.getSymbolFactory().newSymbol("ip_address",7, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
 

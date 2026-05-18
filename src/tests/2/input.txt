@@ -1,7 +1,13 @@
-table ip filter {  
-    chain forward {  
-        type filter hook forward priority 0; policy accept;  
-  
-        ip saddr 10.0.0.1 ip daddr 20.0.0.1 drop  
-    }  
+table inet dmz_firewall {
+    chain input_chain {
+        type filter hook input priority 0; policy accept;
+
+        # 规则 1：只限制了源 IP 和动作 (缺失 dst, proto, port)
+        # AST 需自动补齐：destination="ANY", protocol="ANY"
+        ip saddr 192.168.1.50 drop
+        
+        # 规则 2：只限制了目的端口 (缺失 src, dst)
+        # AST 需自动补齐：source="ANY", destination="ANY"
+        tcp dport 22 drop
+    }
 }

@@ -1,87 +1,204 @@
 import java_cup.runtime.*;
-
+import java.util.List;
 
 parser code {:
-    @Override
+    public void report_error(String message, Object info) {
+        if (info instanceof Symbol){
+            if (((Symbol)info).left != -1){
+                int line = (((Symbol)info).left);
+                int column = (((Symbol)info).right+1);
+                System.err.println(" (line "+line+", column "+column+"): "+message);
+            }
+        }
+    }
     public void syntax_error(Symbol cur_token) {
-        System.err.println("Syntax Error at Line " + cur_token.left + 
-                           ", Column " + cur_token.right + 
-                           ": Unexpected token '" + 
-                           (cur_token.value != null ? cur_token.value : sym.terminalNames[cur_token.sym]) + "'");
+
+    }
+:}
+
+action code {:
+
+    public boolean isValidProto(String proto) {
+        if (proto == null)  return false;
+        return List.of("tcp", "udp", "ip").contains(proto.toLowerCase());
+    }
+    public boolean isValidPriority(String priority){
+        return List.of("raw","mangle","filter","dstnat","srcnat","security","out").contains(priority)||List.of("-300","-200","-150","-100","0","50","100","300").contains(priority);
+    }
+    public boolean isValidHook(String hook) {
+        return List.of("ingress","prerouting","input","output","postrouting","forward","egress").contains(hook);
+    }
+    public boolean isValidType(String type_val) {
+        return List.of("filter","nat","route").contains(type_val);
+    }
+    public boolean isValidTableAddressFamily(String af) {
+        return List.of("ip","inet").contains(af);
+    }
+     public boolean isValidPolicy(String policy) {
+        return List.of("drop","accept").contains(policy);
+    }
+     public boolean isValidAction(String action) {
+        return List.of("accept","drop","reject").contains(action);
+    }
+
+    public boolean isValidPort(String port) {
+        try {
+            int num = Integer.parseInt(port);
+            return num >= 0 && num <= 65535;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public boolean isValidPrefix(String prefix) {
+        try {
+            int num = Integer.parseInt(prefix);
+            return num >= 0 && num <= 32;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public boolean isValidCIDR(String cidr) {
+        String[] parts = cidr.split("/");
+        if (parts.length != 2) return false;
+        String ip = parts[0];
+        String prefix = parts[1];
+        return isValidIPAddres(ip) && isValidPrefix(prefix);
+    }
+    public boolean isValidIPAddres(String ip) {
+        String[] parts = ip.split("\\.");
+        if (parts.length != 4) return false;
+        for (String part : parts) {
+            try {
+                int num = Integer.parseInt(part);
+                if (num < 0 || num > 255) return false;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+        return true;
     }
 :}
 
 // Terminals
 terminal LBRACE, RBRACE, SEMICOLON;
-terminal TABLE,ADDRESS_FAMILY;
-terminal String TABLE_NAME;
-terminal CHAIN,TYPE,TYPE_VAL, HOOK, HOOK_VAL, PRIORITY, PRIORITY_VAL, POLICY, POLICY_VAL;
-terminal String CHAIN_NAME;
-terminal IP,SADDR,DADDR,DPORT;
-terminal String IP_VAL,DPORT_VAL,PROTOCOL_VAL,ACTION_VAL;
-
+terminal TABLE,CHAIN,TYPE, HOOK, PRIORITY, POLICY;
+terminal SADDR,DADDR,DPORT;
+terminal Integer NUMBER;
+terminal String NAME,IP_CIDR, IP_RAW;
 
 // Non-terminals
-non terminal FirewallElement config, tables, table, chains, chain, wrapper, rules, rule;
+non terminal Config prog;
+non terminal FirewallElement rule;
+non terminal FirewallElement[] rules;
+non terminal Chain chain;
+non terminal Chain[] chains;
+non terminal Table table;
+non terminal Table[] tables;
+non terminal String ip_address,priority;
 
 // Grammar rules
 
 
 // TBD: support syntax error recovery and more detailed error messages
 
-// TBD: support for multiple tables and chains
-config ::= tables
+prog ::= tables:ts {:
+    System.out.println("Parser Success");
+    if (ts != null) {  Config config = new Config(ts); RESULT = config; }
+    else { System.out.println("No tables defined."); }
+:}; 
 
-tables ::= /*empty*/ {: RESULT = null; :};  | tables: ts table
+tables ::= /*empty*/ {: RESULT = null; :}  | tables: ts table:t
          {: 
             if (ts == null) {
-                RESULT = new FirewallElement[]{(FirewallElement) RESULT};
+                RESULT = new Table[]{(Table)t};
             } else {
-                FirewallElement[] combined = new FirewallElement[ts.length + 1];
-                combined[0] = (FirewallElement) RESULT;
-                System.arraycopy(ts, 0, combined, 1, ts.length);
+                Table[] combined = new Table[ts.length + 1];
+                combined[ts.length] = (Table)t;
+                System.arraycopy(ts, 0, combined, 0, ts.length);
                 RESULT = combined;
             }
          :}
-
-table::= TABLE ADDRESS_FAMILY TABLE_NAME LBRACE chains RBRACE
-           {: RESULT = rs; :};
-
-chains::= /*empty*/ {: RESULT = null; :};  | chains: cs chain
+        ;
+table::= TABLE NAME:address_family NAME:name LBRACE chains:cs RBRACE{: 
+            if(isValidTableAddressFamily(address_family)) {
+                RESULT = new Table((String)name, (Chain[])cs);
+            } else {
+                report_error("Invalid table address family: " + address_family,parser.cur_token);
+                RESULT = null;
+            }
+        :}
+        ;
+chains::= /*empty*/ {: RESULT = null; :}  | chains: cs chain:c
          {: 
             if (cs == null) {
-                RESULT = new FirewallElement[]{(FirewallElement) RESULT};
+                RESULT = new Chain[]{(Chain)c};
             } else {
-                FirewallElement[] combined = new FirewallElement[cs.length + 1];
-                combined[0] = (FirewallElement) RESULT;
-                System.arraycopy(cs, 0, combined, 1, cs.length);
+                Chain[] combined = new Chain[cs.length + 1];
+                combined[cs.length] = (Chain)c;
+                System.arraycopy(cs, 0, combined, 0, cs.length);
                 RESULT = combined;
             }
          :}
+        ;
 
-chain ::= CHAIN CHAIN_NAME wrapper
-         {: RESULT = rs; :};
-
-// TBD: Add rules for type, hook, priority, and policy
-wrapper ::= LBRACE TYPE TYPE_VAL HOOK HOOK_VAL  PRIORITY PRIORITY_VAL SEMICOLON POLICY POLICY_VAL:val SEMICOLON rules:rs RBRACE
+chain ::= CHAIN NAME:name LBRACE TYPE NAME:type_val HOOK NAME:hook_val PRIORITY priority:priority_val SEMICOLON POLICY NAME:policy_val SEMICOLON rules:rs RBRACE
          {: 
-            RESULT = rs; 
+            if(isValidType(type_val) && isValidHook(hook_val) && isValidPolicy(policy_val)) {
+                RESULT = new Chain((String)name, (String)type_val, (String)hook_val, (String)priority_val,(String)policy_val, (FirewallElement[])rs);
+            } else {
+                report_error("Invalid chain definition: " + name + " " + type_val + " " + hook_val + " " + priority_val + " " + policy_val,parser.cur_token);
+                RESULT = null;
+            }
          :}
+        ;
 
-//TBD: debug test for sematic / toXML
-rules ::= /*empty*/ {: RESULT = null; :};  | rules: rs rule
+priority ::= NAME:name {: 
+    if(isValidPriority(name)){ RESULT=name; }
+    else { report_error("Invalid policy: " + name,parser.cur_token); RESULT = null; }
+:} | NUMBER:number {: 
+        if(isValidPriority(String.valueOf(number))){ RESULT=String.valueOf(number); }
+        else { report_error("Invalid policy: " + String.valueOf(number),parser.cur_token); RESULT = null; }
+:};
+rules ::= /*empty*/ {: RESULT = null; :}  | rules:rs rule:r
          {: 
             if (rs == null) {
-                RESULT = new FirewallElement[]{(FirewallElement) RESULT};
-            } else {
+                RESULT = new FirewallElement[]{(FirewallElement)r};
+            } else { 
                 FirewallElement[] combined = new FirewallElement[rs.length + 1];
-                combined[0] = (FirewallElement) RESULT;
-                System.arraycopy(rs, 0, combined, 1, rs.length);
+                combined[rs.length] = (FirewallElement)r;
+                System.arraycopy(rs, 0, combined, 0, rs.length);
                 RESULT = combined;
             }
          :}
-
-rule ::= IP SADDR IP_VAL:src DADDR IP_VAL:dst PROTOCOL_VAL:proto DPORT PORT_VAL:dport ACTION_VAL:action
+        ;
+//TBD: review basic rule && update
+rule ::= NAME SADDR ip_address:src NAME DADDR ip_address:dst NAME:proto DPORT NUMBER:dport NAME:action
          {: 
-            RESULT = new FirewallElement(action, src, dst, proto,dport); 
-         :};
+            if(isValidAction(action) && isValidPort(String.valueOf(dport)) && isValidProto(proto)) {
+                RESULT = new FirewallElement(action, src, dst, proto, String.valueOf(dport)); 
+            } else {
+                report_error("Invalid rule: " + src + " " + dst + " " + proto + " " + dport + " " + action,parser.cur_token);
+                RESULT = null;
+            }
+         :}
+        ;
+
+ip_address ::= IP_CIDR:cidr {: 
+            if(isValidCIDR(cidr)) {
+               RESULT = cidr;
+           } else {
+               report_error("Invalid IP address: " + cidr,parser.cur_token);
+           }
+          :} | IP_RAW:raw_ip
+         {: 
+            if(isValidIPAddres(raw_ip)) {
+               RESULT = raw_ip;
+           } else {
+               report_error("Invalid IP address: " + raw_ip,parser.cur_token);
+               RESULT = null;
+           }
+          :}
+        ;
+

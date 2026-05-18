@@ -6,89 +6,65 @@
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int INPUT = 6;
-  public static final int SEMICOLON = 16;
-  public static final int RBRACE = 15;
-  public static final int IP = 9;
-  public static final int CHAIN = 5;
-  public static final int ACCEPT = 8;
-  public static final int PORT_VAL = 23;
-  public static final int IP_VAL = 22;
-  public static final int LBRACE = 14;
-  public static final int TABLE_NAME = 24;
-  public static final int TABLE = 2;
-  public static final int UDP = 18;
-  public static final int FORWARD = 7;
-  public static final int PRIORITY = 21;
-  public static final int TYPE = 19;
-  public static final int FILTER = 4;
-  public static final int TCP = 17;
+  public static final int POLICY = 10;
+  public static final int SEMICOLON = 4;
+  public static final int RBRACE = 3;
+  public static final int CHAIN = 6;
+  public static final int NAME = 15;
+  public static final int IP_CIDR = 16;
+  public static final int LBRACE = 2;
+  public static final int TABLE = 5;
+  public static final int PRIORITY = 9;
+  public static final int TYPE = 7;
   public static final int EOF = 0;
-  public static final int CHAIN_NAME = 25;
-  public static final int DADDR = 11;
-  public static final int DROP = 12;
-  public static final int HOOK = 20;
+  public static final int NUMBER = 14;
+  public static final int DADDR = 12;
+  public static final int DPORT = 13;
   public static final int error = 1;
-  public static final int INET = 3;
-  public static final int PORT = 13;
-  public static final int SADDR = 10;
+  public static final int HOOK = 8;
+  public static final int IP_RAW = 17;
+  public static final int SADDR = 11;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
-  "TABLE",
-  "INET",
-  "FILTER",
-  "CHAIN",
-  "INPUT",
-  "FORWARD",
-  "ACCEPT",
-  "IP",
-  "SADDR",
-  "DADDR",
-  "DROP",
-  "PORT",
   "LBRACE",
   "RBRACE",
   "SEMICOLON",
-  "TCP",
-  "UDP",
+  "TABLE",
+  "CHAIN",
   "TYPE",
   "HOOK",
   "PRIORITY",
-  "IP_VAL",
-  "PORT_VAL",
-  "TABLE_NAME",
-  "CHAIN_NAME"
+  "POLICY",
+  "SADDR",
+  "DADDR",
+  "DPORT",
+  "NUMBER",
+  "NAME",
+  "IP_CIDR",
+  "IP_RAW"
   };
 public String[] TT;
 	public sym(){
 		TT = new String[100];
-		TT[6]=new String("INPUT");
-		TT[16]=new String("SEMICOLON");
-		TT[15]=new String("RBRACE");
-		TT[9]=new String("IP");
-		TT[5]=new String("CHAIN");
-		TT[8]=new String("ACCEPT");
-		TT[23]=new String("PORT_VAL");
-		TT[22]=new String("IP_VAL");
-		TT[14]=new String("LBRACE");
-		TT[24]=new String("TABLE_NAME");
-		TT[2]=new String("TABLE");
-		TT[18]=new String("UDP");
-		TT[7]=new String("FORWARD");
-		TT[21]=new String("PRIORITY");
-		TT[19]=new String("TYPE");
-		TT[4]=new String("FILTER");
-		TT[17]=new String("TCP");
+		TT[10]=new String("POLICY");
+		TT[4]=new String("SEMICOLON");
+		TT[3]=new String("RBRACE");
+		TT[6]=new String("CHAIN");
+		TT[15]=new String("NAME");
+		TT[16]=new String("IP_CIDR");
+		TT[2]=new String("LBRACE");
+		TT[5]=new String("TABLE");
+		TT[9]=new String("PRIORITY");
+		TT[7]=new String("TYPE");
 		TT[0]=new String("EOF");
-		TT[25]=new String("CHAIN_NAME");
-		TT[11]=new String("DADDR");
-		TT[12]=new String("DROP");
-		TT[20]=new String("HOOK");
+		TT[14]=new String("NUMBER");
+		TT[12]=new String("DADDR");
+		TT[13]=new String("DPORT");
 		TT[1]=new String("error");
-		TT[3]=new String("INET");
-		TT[13]=new String("PORT");
-		TT[10]=new String("SADDR");
+		TT[8]=new String("HOOK");
+		TT[17]=new String("IP_RAW");
+		TT[11]=new String("SADDR");
 	}
 public String getTT(int i){return TT[i];}
 }
