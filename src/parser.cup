@@ -56,6 +56,7 @@ non terminal Table table;
 non terminal Table[] tables;
 non terminal String ip_address,statements;
 
+
 // Grammar rules
 
 
@@ -145,15 +146,13 @@ rule ::= matches:ms statements:stmts
         :}
         ;
 
-statements ::= ACTION:act {: RESULT = actionMap.get((String)act); :} | /*empty*/ {: RESULT = null; :};
+statements ::= ACTION:act {: RESULT = actionMap.get((String)act); :};
 
 matches ::= matches:ms match:m{:
                    ms.addAll(m);
                    RESULT = ms;
                :}
-            | /*empty */{:
-                   RESULT = new ArrayList<Param>();
-            :}
+            | /*empty*/ {: RESULT = new ArrayList<Param>(); :}
             ;
 
 match ::= ADDRESS_FAMILY SADDR ip_address:ip   {: 
@@ -183,7 +182,6 @@ match ::= ADDRESS_FAMILY SADDR ip_address:ip   {:
                 list.add(new Param("dport", String.valueOf(num)));
                 RESULT = list; 
             :}
-        |
         ;
 
 
@@ -203,5 +201,3 @@ ip_address ::= IP_CIDR:cidr {:
            }
           :}
         ;
-
-

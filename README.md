@@ -63,7 +63,7 @@ If you want to run the steps manually:
 ```bash
 cd src
 jflex scanner.jflex
-java java_cup.Main -expect 8 parser.cup
+java java_cup.Main parser.cup
 javac *.java
 java Main input.txt output.xml
 ```
@@ -73,7 +73,7 @@ java Main input.txt output.xml
 ```bat
 cd src
 jflex scanner.jflex
-java java_cup.Main -expect 8 parser.cup
+java java_cup.Main parser.cup
 javac *.java
 java Main input.txt output.xml
 ```
