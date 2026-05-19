@@ -16,7 +16,11 @@ number = \-?[0-9]+
 
 ipv4 = {number}"."{number}"."{number}"."{number}
 cidr = {ipv4}"/"{number}
-
+protocol = "tcp" | "udp" | "udplite" | "sctp"| "dccp"
+hook="prerouting"| "input"|"output"| "postrouting"| "forward"
+type="filter"| "nat"| "route"
+address_family="ip"  | "ip6"
+action="drop" | "accept"
 %{
   private Symbol symbol(int type) {
     return new Symbol(type, yyline + 1, yycolumn + 1);
@@ -38,6 +42,14 @@ cidr = {ipv4}"/"{number}
 "priority" { return symbol(sym.PRIORITY); }
 "policy"   { return symbol(sym.POLICY); }
 "dport"    { return symbol(sym.DPORT); }
+"sport"    { return symbol(sym.SPORT); }
+"id"       { return symbol(sym.ID); }
+{protocol} { return symbol(sym.PROTOCOL, yytext()); }
+{hook}    { return symbol(sym.HOOK_VAL, yytext()); }
+{type}     { return symbol(sym.TYPE_VAL, yytext()); }
+{address_family} { return symbol(sym.ADDRESS_FAMILY, yytext()); }
+{action}   { return symbol(sym.ACTION, yytext()); }
+
 
 // Symbols
 ";"        { return symbol(sym.SEMICOLON); }

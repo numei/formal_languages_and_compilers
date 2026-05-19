@@ -6,24 +6,31 @@
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int POLICY = 10;
+  public static final int POLICY = 13;
   public static final int SEMICOLON = 4;
   public static final int RBRACE = 3;
-  public static final int CHAIN = 6;
-  public static final int NAME = 15;
-  public static final int IP_CIDR = 16;
+  public static final int PROTOCOL = 20;
+  public static final int TYPE_VAL = 9;
+  public static final int CHAIN = 7;
+  public static final int NAME = 22;
+  public static final int IP_CIDR = 23;
+  public static final int ADDRESS_FAMILY = 6;
   public static final int LBRACE = 2;
+  public static final int HOOK_VAL = 11;
+  public static final int ID = 15;
   public static final int TABLE = 5;
-  public static final int PRIORITY = 9;
-  public static final int TYPE = 7;
+  public static final int PRIORITY = 12;
+  public static final int TYPE = 8;
+  public static final int NUMBER = 21;
   public static final int EOF = 0;
-  public static final int NUMBER = 14;
-  public static final int DADDR = 12;
-  public static final int DPORT = 13;
+  public static final int DADDR = 17;
+  public static final int DPORT = 19;
   public static final int error = 1;
-  public static final int HOOK = 8;
-  public static final int IP_RAW = 17;
-  public static final int SADDR = 11;
+  public static final int HOOK = 10;
+  public static final int ACTION = 14;
+  public static final int IP_RAW = 24;
+  public static final int SADDR = 16;
+  public static final int SPORT = 18;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -31,41 +38,25 @@ public class sym {
   "RBRACE",
   "SEMICOLON",
   "TABLE",
+  "ADDRESS_FAMILY",
   "CHAIN",
   "TYPE",
+  "TYPE_VAL",
   "HOOK",
+  "HOOK_VAL",
   "PRIORITY",
   "POLICY",
+  "ACTION",
+  "ID",
   "SADDR",
   "DADDR",
+  "SPORT",
   "DPORT",
+  "PROTOCOL",
   "NUMBER",
   "NAME",
   "IP_CIDR",
   "IP_RAW"
   };
-public String[] TT;
-	public sym(){
-		TT = new String[100];
-		TT[10]=new String("POLICY");
-		TT[4]=new String("SEMICOLON");
-		TT[3]=new String("RBRACE");
-		TT[6]=new String("CHAIN");
-		TT[15]=new String("NAME");
-		TT[16]=new String("IP_CIDR");
-		TT[2]=new String("LBRACE");
-		TT[5]=new String("TABLE");
-		TT[9]=new String("PRIORITY");
-		TT[7]=new String("TYPE");
-		TT[0]=new String("EOF");
-		TT[14]=new String("NUMBER");
-		TT[12]=new String("DADDR");
-		TT[13]=new String("DPORT");
-		TT[1]=new String("error");
-		TT[8]=new String("HOOK");
-		TT[17]=new String("IP_RAW");
-		TT[11]=new String("SADDR");
-	}
-public String getTT(int i){return TT[i];}
 }
 
