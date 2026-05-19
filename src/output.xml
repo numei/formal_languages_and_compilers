@@ -1,17 +1,17 @@
-<node function_type="FIREWALL" name="edge_firewall">
+<node functional_type="FIREWALL" name="edge_firewall">
   <configuration name="test">
-    <firewall defaultAction="drop">
+    <firewall defaultAction="DENY">
       <elements>
           <id>23</id>
-          <action>drop</action>
+          <action>DENY</action>
           <source>10.0.1.0/24</source>
           <destination>192.168.1.100</destination>
-          <protocol>tcp</protocol>
+          <protocol>TCP</protocol>
           <src_port>1024</src_port>
           <dst_port>443</dst_port>
       </elements>
       <elements>
-          <action>accept</action>
+          <action>ALLOW</action>
           <source>172.16.0.5</source>
           <destination>8.8.8.8</destination>
           <dst_port>53</dst_port>

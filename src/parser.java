@@ -168,7 +168,9 @@ class CUP$parser$actions {
         public String getType() { return type; }
         public String getValue() { return value; }
     }
-
+    static Map<String, String> actionMap = Map.of("accept", "ALLOW","drop", "DENY");
+    static Map<String, String> protocolMap = Map.of("tcp", "TCP","udp", "UDP");
+    
 
   private final parser parser;
 
@@ -320,15 +322,15 @@ class CUP$parser$actions {
 		int priority_valleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)).left;
 		int priority_valright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-6)).right;
 		Integer priority_val = (Integer)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-6)).value;
-		int policy_valleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
-		int policy_valright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
-		Object policy_val = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
+		int action_valleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).left;
+		int action_valright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-3)).right;
+		Object action_val = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-3)).value;
 		int rsleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).left;
 		int rsright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		FirewallElement[] rs = (FirewallElement[])((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
 		 
             if(Validator.isValidPriority(priority_val)) {
-                RESULT = new Chain((String)name, (String)type_val, (String)hook_val, priority_val,(String)policy_val, (FirewallElement[])rs);
+                RESULT = new Chain((String)name, (String)type_val, (String)hook_val, priority_val,actionMap.get((String)action_val), (FirewallElement[])rs);
             } else {
                 report_error("Invalid policy: " + String.valueOf(priority_val),parser.cur_token); 
                 RESULT = null;
@@ -392,7 +394,7 @@ class CUP$parser$actions {
                     case "daddr":    firewall.setDestination(value); break;  
                     case "sport":    firewall.setSourcePort(value); break;
                     case "dport":    firewall.setDestinationPort(value); break;
-                    case "protocol": firewall.setProtocol(value); break;
+                    case "protocol": firewall.setProtocol(protocolMap.getOrDefault(value,"OTHER"));  break;
                 }
             }
             if (firewall.getSource() == null || firewall.getDestination() == null) {
@@ -413,7 +415,7 @@ class CUP$parser$actions {
 		int actleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int actright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		Object act = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		 RESULT = (String)act; 
+		 RESULT = actionMap.get((String)act); 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("statements",10, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;

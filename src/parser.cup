@@ -29,7 +29,9 @@ action code {:
         public String getType() { return type; }
         public String getValue() { return value; }
     }
-
+    static Map<String, String> actionMap = Map.of("accept", "ALLOW","drop", "DENY");
+    static Map<String, String> protocolMap = Map.of("tcp", "TCP","udp", "UDP");
+    
 :}
 
 
@@ -94,10 +96,10 @@ chains::= /*empty*/ {: RESULT = null; :}  | chains: cs chain:c
          :}
         ;
 
-chain ::= CHAIN NAME:name LBRACE TYPE TYPE_VAL: type_val HOOK HOOK_VAL:hook_val PRIORITY NUMBER:priority_val SEMICOLON POLICY ACTION:policy_val SEMICOLON rules:rs RBRACE
+chain ::= CHAIN NAME:name LBRACE TYPE TYPE_VAL: type_val HOOK HOOK_VAL:hook_val PRIORITY NUMBER:priority_val SEMICOLON POLICY ACTION:action_val SEMICOLON rules:rs RBRACE
          {: 
             if(Validator.isValidPriority(priority_val)) {
-                RESULT = new Chain((String)name, (String)type_val, (String)hook_val, priority_val,(String)policy_val, (FirewallElement[])rs);
+                RESULT = new Chain((String)name, (String)type_val, (String)hook_val, priority_val,actionMap.get((String)action_val), (FirewallElement[])rs);
             } else {
                 report_error("Invalid policy: " + String.valueOf(priority_val),parser.cur_token); 
                 RESULT = null;
@@ -131,7 +133,7 @@ rule ::= matches:ms statements:stmts
                     case "daddr":    firewall.setDestination(value); break;  
                     case "sport":    firewall.setSourcePort(value); break;
                     case "dport":    firewall.setDestinationPort(value); break;
-                    case "protocol": firewall.setProtocol(value); break;
+                    case "protocol": firewall.setProtocol(protocolMap.getOrDefault(value,"OTHER"));  break;
                 }
             }
             if (firewall.getSource() == null || firewall.getDestination() == null) {
@@ -143,7 +145,7 @@ rule ::= matches:ms statements:stmts
         :}
         ;
 
-statements ::= ACTION:act {: RESULT = (String)act; :} | /*empty*/ {: RESULT = null; :};
+statements ::= ACTION:act {: RESULT = actionMap.get((String)act); :} | /*empty*/ {: RESULT = null; :};
 
 matches ::= matches:ms match:m{:
                    ms.addAll(m);
@@ -153,7 +155,7 @@ matches ::= matches:ms match:m{:
                    RESULT = new ArrayList<Param>();
             :}
             ;
-            
+
 match ::= ADDRESS_FAMILY SADDR ip_address:ip   {: 
                 ArrayList<Param> list = new ArrayList<>(1);
                 list.add(new Param("saddr", ip));

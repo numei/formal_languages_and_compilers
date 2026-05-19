@@ -1,5 +1,6 @@
 
 public class FirewallElement {
+
     private  String action;
     private  String source;
     private  String sourcePort;
@@ -7,6 +8,7 @@ public class FirewallElement {
     private  String destinationPort;
     private  String protocol;
     private  String id;
+    
     
     public String getAction() { return action; }
     public String getSource() { return source; }
@@ -26,6 +28,8 @@ public class FirewallElement {
 
 
     public String toXML() {
+
+
         StringBuilder xml = new StringBuilder();
         xml.append("      <elements>\n");
         if(id != null){xml.append("          <id>").append(id).append("</id>\n");}

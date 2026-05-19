@@ -1,5 +1,13 @@
+import java.util.HashMap;
 
 public class Validator {
+    static HashMap<String,String> actionMap = new HashMap<>();
+
+    public Validator() {
+        actionMap.put("accept","ALLOW");
+        actionMap.put("drop","DENY");
+    }
+    
 
     public static  enum PriorityEnum {
         NF_IP_PRI_CONNTRACK_DEFRAG(-400),
