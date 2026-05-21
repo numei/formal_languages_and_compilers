@@ -31,9 +31,8 @@ public class Main {
             
             Config result = (Config)(p.parse().value);
             
-            // 4. If parsing is successful, generate and write XML
             if (result != null ) { 
-                writer.write(result.toXML());
+                result.writeXML(writer);
                 System.out.println("[SUCCESS] Parsing complete. XML saved to: " + outputFilePath);
             } else {
                  System.err.println("[WARNING] Parsing finished, but no valid AST was generated.");
