@@ -1,0 +1,14 @@
+table ip {
+    chain broken_chain {
+        type filter hook forward priority 0; policy drop;
+        ip saddr 10.0.3.1 ip daddr 192.168.4.1 accept
+    }
+}
+
+table ip recovery_table {
+    chain forward_chain {
+        type filter hook forward priority 0; policy accept;
+
+        ip saddr 10.0.3.2 ip daddr 192.168.4.2 drop
+    }
+}

@@ -10,14 +10,11 @@
     <xsd:simpleType name="functionalTypes">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="FIREWALL" />
-
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:element name="node">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element ref="neighbour" maxOccurs="unbounded"
-                    minOccurs="0" />
                 <xsd:element ref="configuration" maxOccurs="1"
                     minOccurs="0" />
             </xsd:sequence>
@@ -25,14 +22,7 @@
             <xsd:attribute name="name" type="xsd:string" use="required" />
             <xsd:attribute name="functional_type" type="functionalTypes" use="optional" />
         </xsd:complexType>
-        <xsd:unique name="uniqueNeighbourId">
-            <xsd:selector xpath="neighbour" />
-            <xsd:field xpath="@id" />
-        </xsd:unique>
-        <xsd:unique name="uniqueConfigurationId">
-            <xsd:selector xpath="neighbour" />
-            <xsd:field xpath="@id" />
-        </xsd:unique>
+
     </xsd:element>
     <xsd:element name="neighbour">
         <xsd:complexType>

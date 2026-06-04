@@ -2,17 +2,60 @@ import java_cup.runtime.*;
 import java.util.*;
 
 parser code {:
-    public void report_error(String message, Object info) {
-        if (info instanceof Symbol){
-            if (((Symbol)info).left != -1){
-                int line = (((Symbol)info).left);
-                int column = (((Symbol)info).right+1);
-                System.err.println(" (line "+line+", column "+column+"): "+message);
-            }
-        }
-    }
-    public void syntax_error(Symbol cur_token) {
+    private int syntaxErrorCount = 0;
 
+    public int getSyntaxErrorCount() {
+        return syntaxErrorCount;
+    }
+
+    private String tokenName(Symbol token) {
+        if (token == null) return "EOF";
+        int id = token.sym;
+        if (id >= 0 && id < sym.terminalNames.length) {
+            return sym.terminalNames[id];
+        }
+        return "UNKNOWN";
+    }
+
+    private String tokenText(Symbol token) {
+        if (token == null || token.value == null) {
+            return tokenName(token);
+        }
+        return tokenName(token) + " '" + token.value + "'";
+    }
+
+    private String location(Object info) {
+        if (info instanceof Symbol && ((Symbol)info).left != -1) {
+            Symbol token = (Symbol) info;
+            return "line " + token.left + ", column " + (token.right + 1);
+        }
+        return "unknown location";
+    }
+
+    public void report_error(String message, Object info) {
+        syntaxErrorCount++;
+        System.err.println("[ERROR] " + location(info) + ": " + message);
+    }
+
+    public void report_syntax(String expectedSyntax, Object info) {
+        syntaxErrorCount++;
+        System.err.println("[EXPECTED] " + location(info) + ": " + expectedSyntax);
+    }
+
+    public void report_constraint(String message, Object info) {
+        syntaxErrorCount++;
+        System.err.println("[XSD] " + location(info) + ": " + message);
+    }
+
+    public void syntax_error(Symbol cur_token) {
+        syntaxErrorCount++;
+        System.err.println("[SYNTAX] " + location(cur_token) + ": unexpected " + tokenText(cur_token));
+        System.err.println("[EXPECTED] firewall rule: ip saddr <ipv4|cidr> ip daddr <ipv4|cidr|range|set> [tcp|udp sport <number>] [tcp|udp dport <number>] <accept|drop>");
+        System.err.println("[XSD] current output supports one table, one chain per table, and each rule requires source and destination");
+    }
+
+    public void unrecovered_syntax_error(Symbol cur_token) throws Exception {
+        report_error("Unrecoverable syntax error near " + tokenText(cur_token), cur_token);
     }
 :}
 
@@ -54,13 +97,11 @@ non terminal Chain chain;
 non terminal Chain[] chains;
 non terminal Table table;
 non terminal Table[] tables;
-non terminal String ip_address,statements,daddr_address,daddr_items,daddr_item,daddr_suffix;
+non terminal String ip_address,statements,chain_policy,daddr_address,daddr_items,daddr_item,daddr_suffix;
 
 
 // Grammar rules
 
-
-// TBD: support syntax error recovery and more detailed error messages
 
 prog ::= tables:ts {:
     System.out.println("Parser Success");
@@ -70,47 +111,81 @@ prog ::= tables:ts {:
 
 tables ::= /*empty*/ {: RESULT = null; :}  | tables: ts table:t
          {: 
-            if (ts == null) {
+            if (t == null) {
+                RESULT = ts;
+            } else if (ts == null) {
                 RESULT = new Table[]{(Table)t};
             } else {
-                Table[] combined = new Table[ts.length + 1];
-                combined[ts.length] = (Table)t;
-                System.arraycopy(ts, 0, combined, 0, ts.length);
-                RESULT = combined;
+                /* support more than one table 
+                    Table[] combined = new Table[ts.length + 1];
+                    combined[ts.length] = (Table)t;
+                    System.arraycopy(ts, 0, combined, 0, ts.length);
+                    RESULT = combined;
+                */
+                report_constraint("Only one table is supported because the generated XML root is one <node>. Ignoring extra table.", new Symbol(0, tleft, tright));
+                RESULT = ts;
             }
          :}
         ;
 table::= TABLE ADDRESS_FAMILY NAME:name LBRACE chains:cs RBRACE{: 
             RESULT = new Table((String)name, (Chain[])cs);
         :}
+        | TABLE error RBRACE {:
+            report_syntax("table ip <table_name> { chain <chain_name> { ... } }", parser.cur_token);
+            report_constraint("A table maps to <node>.", parser.cur_token);
+            RESULT = null;
+        :}
         ;
 chains::= /*empty*/ {: RESULT = null; :}  | chains: cs chain:c
          {: 
-            if (cs == null) {
+            if (c == null) {
+                RESULT = cs;
+            } else if (cs == null) {
                 RESULT = new Chain[]{(Chain)c};
             } else {
-                Chain[] combined = new Chain[cs.length + 1];
-                combined[cs.length] = (Chain)c;
-                System.arraycopy(cs, 0, combined, 0, cs.length);
-                RESULT = combined;
+                report_constraint("Only one chain is supported per table because <node> allows one <configuration>. Ignoring extra chain.", new Symbol(0, cleft, cright));
+                RESULT = cs;
             }
          :}
         ;
 
-chain ::= CHAIN NAME:name LBRACE TYPE TYPE_VAL: type_val HOOK HOOK_VAL:hook_val PRIORITY NUMBER:priority_val SEMICOLON POLICY ACTION:action_val SEMICOLON rules:rs RBRACE
+chain ::= CHAIN NAME:name LBRACE TYPE TYPE_VAL: type_val HOOK HOOK_VAL:hook_val PRIORITY NUMBER:priority_val SEMICOLON chain_policy:policy_val rules:rs RBRACE
          {: 
             if(Validator.isValidPriority(priority_val)) {
-                RESULT = new Chain((String)name, (String)type_val, (String)hook_val, priority_val,actionMap.get((String)action_val), (FirewallElement[])rs);
+                RESULT = new Chain((String)name, (String)type_val, (String)hook_val, priority_val,policy_val, (FirewallElement[])rs);
             } else {
-                report_error("Invalid policy: " + String.valueOf(priority_val),parser.cur_token); 
+                report_error("Invalid priority: " + String.valueOf(priority_val),parser.cur_token); 
                 RESULT = null;
             }
+        :}
+        | CHAIN NAME:name LBRACE TYPE TYPE_VAL: type_val HOOK HOOK_VAL:hook_val PRIORITY NUMBER:priority_val SEMICOLON chain_policy:policy_val rules:rs error RBRACE
+         {:
+            report_syntax("ip saddr <source> ip daddr <destination> [protocol port] <accept|drop>", parser.cur_token);
+            report_constraint("Each valid rule maps to one <elements>.", parser.cur_token);
+            if(Validator.isValidPriority(priority_val)) {
+                RESULT = new Chain((String)name, (String)type_val, (String)hook_val, priority_val,policy_val, (FirewallElement[])rs);
+            } else {
+                report_error("Invalid priority: " + String.valueOf(priority_val),parser.cur_token);
+                RESULT = null;
+            }
+        :}
+        | CHAIN NAME:name LBRACE error RBRACE
+         {:
+            report_syntax("chain <name> { type <filter|nat|route> hook <hook> priority <number>; [policy <accept|drop>;] ... }", parser.cur_token);
+            report_constraint("A chain maps to <configuration>/<firewall>; only one chain is supported per table.", parser.cur_token);
+            RESULT = null;
          :}
         ;
+
+chain_policy ::= POLICY ACTION:action_val SEMICOLON {: RESULT = actionMap.get((String)action_val); :}
+               | /*empty*/ {: RESULT = null; :}
+               ;
 
 rules ::= /*empty*/ {: RESULT = null; :}  | rules:rs rule:r
          {: 
-            if (rs == null) {
+            if (r == null) {
+                RESULT = rs;
+            } else if (rs == null) {
                 RESULT = new FirewallElement[]{(FirewallElement)r};
             } else { 
                 FirewallElement[] combined = new FirewallElement[rs.length + 1];
@@ -118,10 +193,14 @@ rules ::= /*empty*/ {: RESULT = null; :}  | rules:rs rule:r
                 System.arraycopy(rs, 0, combined, 0, rs.length);
                 RESULT = combined;
             }
+        :}
+        | rules:rs error ACTION
+         {:
+            report_syntax("ip saddr <source> ip daddr <destination> [protocol port] <accept|drop>", parser.cur_token);
+            RESULT = rs;
          :}
         ;
 
-//TBD: support ipv6
 rule ::= matches:ms statements:stmts 
         {:
             FirewallElement firewall = new FirewallElement();         
@@ -139,6 +218,7 @@ rule ::= matches:ms statements:stmts
             }
             if (firewall.getSource() == null || firewall.getDestination() == null) {
                 report_error("Missing source or destination IP address", parser.cur_token);
+                report_constraint("Each <elements> must contain <source> and <destination>.", parser.cur_token);
                 RESULT = null; 
             } else {
                 RESULT = firewall;
@@ -182,12 +262,35 @@ match ::= ADDRESS_FAMILY SADDR ip_address:ip   {:
                 list.add(new Param("dport", String.valueOf(num)));
                 RESULT = list; 
             :}
+        | ADDRESS_FAMILY SADDR error {:
+                report_syntax("ip saddr <ipv4|cidr>", parser.cur_token);
+                report_constraint("saddr maps to required <source>.", parser.cur_token);
+                RESULT = new ArrayList<Param>();
+            :}
+        | ADDRESS_FAMILY DADDR error {:
+                report_syntax("ip daddr <ipv4|cidr|ipv4-ipv4|{item,item}>", parser.cur_token);
+                report_constraint("daddr maps to required <destination>.", parser.cur_token);
+                RESULT = new ArrayList<Param>();
+            :}
+        | PROTOCOL SPORT error {:
+                report_syntax("<tcp|udp> sport <number>", parser.cur_token);
+                RESULT = new ArrayList<Param>();
+            :}
+        | PROTOCOL DPORT error {:
+                report_syntax("<tcp|udp> dport <number>", parser.cur_token);
+                RESULT = new ArrayList<Param>();
+            :}
         ;
 
 
 daddr_address ::= daddr_item:item {: RESULT = item; :}
                 | LBRACE daddr_items:items RBRACE {:
                     RESULT = items == null ? null : "{" + items + "}";
+                :}
+                | LBRACE error RBRACE {:
+                    report_syntax("ip daddr { <ipv4|cidr|range>, ... }", parser.cur_token);
+                    report_constraint("daddr set is serialized as <destination> text.", parser.cur_token);
+                    RESULT = null;
                 :}
                 ;
 

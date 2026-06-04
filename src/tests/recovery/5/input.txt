@@ -1,0 +1,13 @@
+table ip multi_chain_limit {
+    chain first_chain {
+        type filter hook forward priority 0; policy drop;
+
+        ip saddr 10.0.5.1 ip daddr 192.168.5.1 accept
+    }
+
+    chain extra_chain {
+        type filter hook forward priority 0; policy accept;
+
+        ip saddr 10.0.5.2 ip daddr 192.168.5.2 drop
+    }
+}

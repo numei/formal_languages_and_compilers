@@ -30,9 +30,13 @@ public class Main {
             parser p = new parser(lexer);
             
             Config result = (Config)(p.parse().value);
+            int syntaxErrors = p.getSyntaxErrorCount();
             
             if (result != null ) { 
                 result.writeXML(writer);
+                if (syntaxErrors > 0) {
+                    System.err.println("[WARNING] Parsing recovered from " + syntaxErrors + " syntax error(s).");
+                }
                 System.out.println("[SUCCESS] Parsing complete. XML saved to: " + outputFilePath);
             } else {
                  System.err.println("[WARNING] Parsing finished, but no valid AST was generated.");

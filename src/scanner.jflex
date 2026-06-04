@@ -20,8 +20,8 @@ cidr = {ipv4}"/"{number}
 ip_range = {ipv4}"-"{ipv4}
 protocol = "tcp" | "udp" | "udplite" | "sctp"| "dccp"
 hook="prerouting"| "input"|"output"| "postrouting"| "forward"
-type="filter"| "nat"| "route"
-address_family="ip"  | "ip6"
+type="filter"
+address_family="ip" 
 action="drop" | "accept"
 %{
   private Symbol symbol(int type) {

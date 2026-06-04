@@ -1,2 +1,16 @@
 *.class
 lib/*.jar
+
+# macOS metadata
+.DS_Store
+
+# JFlex/CUP generated sources
+src/scanner.java
+src/scanner.java~
+src/parser.java
+src/sym.java
+
+# Generated XML output
+src/output.xml
+src/tests/*/output.xml
+src/tests/recovery/*/output.xml

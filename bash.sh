@@ -29,20 +29,30 @@ success=0
 TEST_OUTPUT_DIR="$(mktemp -d "${TMPDIR:-/tmp}/compiler-tests.XXXXXX")"
 trap 'rm -rf "$TEST_OUTPUT_DIR"' EXIT
 
-for test_number in {1..10}; do
-    input_file="tests/$test_number/input.txt"
-    total=$((total + 1))
-    output_file="$TEST_OUTPUT_DIR/test_$test_number.xml"
+run_test() {
+    local test_name="$1"
+    local input_file="$2"
+    local output_file="$TEST_OUTPUT_DIR/${test_name//\//_}.xml"
 
-    echo "Running test $test_number..."
+    total=$((total + 1))
+    echo "Running test $test_name..."
     if [[ -f "$input_file" ]] &&
         java -cp "$CP" Main "$input_file" "$output_file" &&
         xmllint --noout --schema "$XSD_FILE" "$output_file"; then
         success=$((success + 1))
-        echo "[PASS] test $test_number"
+        echo "[PASS] test $test_name"
     else
-        echo "[FAIL] test $test_number"
+        echo "[FAIL] test $test_name"
     fi
+}
+
+for test_number in {1..10}; do
+    run_test "$test_number" "tests/$test_number/input.txt"
+done
+
+for recovery_input in tests/recovery/*/input.txt; do
+    recovery_name="recovery/$(basename "$(dirname "$recovery_input")")"
+    run_test "$recovery_name" "$recovery_input"
 done
 
 echo "Tests passed: $success/$total"
