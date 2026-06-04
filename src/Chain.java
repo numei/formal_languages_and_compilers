@@ -19,7 +19,7 @@ public class Chain {
     private String hook;
 
     @XmlTransient
-    private Integer priority;
+    private Long priority;
 
     @XmlTransient
     private String policy;
@@ -30,7 +30,7 @@ public class Chain {
     public Chain() {
     }
 
-    public Chain(String name, String type, String hook, Integer priority, String policy, FirewallElement[] rules) {
+    public Chain(String name, String type, String hook, Long priority, String policy, FirewallElement[] rules) {
         this.name = name;
         this.type = type;
         this.hook = hook;

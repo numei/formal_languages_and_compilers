@@ -1,13 +1,11 @@
-import java.util.HashMap;
-
 public class Validator {
-    static HashMap<String,String> actionMap = new HashMap<>();
-
-    public Validator() {
-        actionMap.put("accept","ALLOW");
-        actionMap.put("drop","DENY");
+    public static String mapNftVerdictToAction(String verdict) {
+        if ("accept".equals(verdict)) return "ALLOW";
+        if ("drop".equals(verdict)) return "DENY";
+        if ("queue".equals(verdict)) return "ALLOW_COND";
+        return null;
     }
-    
+
 
     public static  enum PriorityEnum {
         NF_IP_PRI_CONNTRACK_DEFRAG(-400),
@@ -32,7 +30,7 @@ public class Validator {
             return value;
         }
 
-        public static boolean fromValue(int value) {
+        public static boolean fromValue(long value) {
             for (PriorityEnum priority : PriorityEnum.values()) {
                 if (priority.getValue() == value) {
                     return true;
@@ -42,7 +40,7 @@ public class Validator {
         }
     }
 
-    public static boolean isValidPriority(int priority){
+    public static boolean isValidPriority(long priority){
         return PriorityEnum.fromValue(priority);
     }
 

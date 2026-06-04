@@ -2,6 +2,6 @@ table ip cidr_range_filter {
     chain forward_chain {
         type filter hook forward priority 0; policy drop;
 
-        ip saddr 198.51.100.0/24 ip daddr { 203.0.113.0/28, 203.0.113.32/28, 203.0.113.100-203.0.113.110 } accept
+        ip saddr 198.51.100.0/24 ip daddr { 203.0.113.0/28, 203.0.113.32/28, 203.0.113.100-203.0.113.110 } queue
     }
 }

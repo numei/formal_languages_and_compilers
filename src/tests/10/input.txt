@@ -1,6 +1,6 @@
 table ip route_filter {
     chain output_chain {
-        type route hook output priority -150; policy accept;
+        type filter hook output priority -150; policy accept;
 
         ip id 7 ip saddr 127.0.0.1 ip daddr 127.0.0.1 accept
         ip saddr 10.10.10.10 ip daddr { 172.20.0.1, 172.20.0.2 } udp dport 500 drop

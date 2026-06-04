@@ -12,14 +12,16 @@ public class sym {
   public static final int PROTOCOL = 22;
   public static final int TYPE_VAL = 11;
   public static final int CHAIN = 9;
+  public static final int QUEUE = 29;
   public static final int NAME = 24;
-  public static final int IP_CIDR = 25;
+  public static final int IP_CIDR = 26;
   public static final int ADDRESS_FAMILY = 8;
   public static final int LBRACE = 2;
   public static final int ID = 17;
   public static final int HOOK_VAL = 13;
   public static final int TABLE = 7;
-  public static final int IP_RANGE = 27;
+  public static final int IP_RANGE = 28;
+  public static final int STRING = 25;
   public static final int PRIORITY = 14;
   public static final int TYPE = 10;
   public static final int COMMA = 5;
@@ -31,7 +33,7 @@ public class sym {
   public static final int HOOK = 12;
   public static final int ACTION = 16;
   public static final int DASH = 6;
-  public static final int IP_RAW = 26;
+  public static final int IP_RAW = 27;
   public static final int SADDR = 18;
   public static final int SPORT = 20;
   public static final String[] terminalNames = new String[] {
@@ -60,9 +62,11 @@ public class sym {
   "PROTOCOL",
   "NUMBER",
   "NAME",
+  "STRING",
   "IP_CIDR",
   "IP_RAW",
-  "IP_RANGE"
+  "IP_RANGE",
+  "QUEUE"
   };
 }
 
