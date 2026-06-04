@@ -1,9 +1,7 @@
-table inet edge_firewall {
+table ip edge_firewall {
     chain forward_chain {
         type filter hook forward priority 0; policy drop;
 
         ip saddr 10.0.1.0/24 ip daddr 192.168.1.100 tcp sport 1024 tcp dport 443 accept
-        
-        ip saddr 172.16.0.5 ip daddr 8.8.8.8 udp dport 53 accept
     }
 }

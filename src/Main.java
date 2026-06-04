@@ -36,10 +36,12 @@ public class Main {
                 System.out.println("[SUCCESS] Parsing complete. XML saved to: " + outputFilePath);
             } else {
                  System.err.println("[WARNING] Parsing finished, but no valid AST was generated.");
+                 System.exit(1);
             }
 
         } catch (Exception e) {
             System.err.println("[ERROR] An exception occurred during execution: " + e.getMessage());
+            System.exit(1);
         }
     }
 }

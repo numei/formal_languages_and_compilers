@@ -1,13 +1,8 @@
-table ip nat {  
-    chain postrouting {  
-        type nat hook postrouting priority 100;  
-        ip saddr 10.0.0.0/24 masquerade  
-        ip saddr 10.0.0.0/24 masquerade  
-    }  
-}  
-  
-table ip filter {  
-    chain forward {  
-        type filter hook forward priority 0; policy deny;  
-    }  
+table ip core_router {
+    chain forward_chain {
+        type filter hook forward priority 50; policy drop;
+
+        ip saddr 10.0.0.0/8 ip daddr 224.0.0.1 udp dport 123 accept
+        ip saddr 192.168.2.0/24 ip daddr 10.10.10.10 tcp dport 8080 accept
+    }
 }

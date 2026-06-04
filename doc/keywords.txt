@@ -43,7 +43,7 @@ ip daddr <cidr>          Ibid.
 # protocol 
 ip protocol tcp  
 ip protocol udp  
-# 无协议声明 → ANY  
+# no protocol → ANY  
   
 src_port/dst_port  
 tcp sport <port>  
@@ -56,13 +56,3 @@ udp dport <port>
 accept                   # → ALLOW  
 drop                     # → DENY
 
-3.nat rule -> <nat> 
-table ip nat {  
-    chain postrouting {  
-        type nat hook postrouting priority 100;  
-        ip saddr <subnet> masquerade  
-        # 或  
-        ip saddr <subnet> snat to <public_ip>  
-    }  
-}  
-ip saddr <subnet> → <nat><source>subnet</source></nat>

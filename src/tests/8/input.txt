@@ -1,0 +1,8 @@
+table ip output_filter {
+    chain forward_chain {
+        type filter hook output priority 50; policy accept;
+
+        ip saddr 10.1.0.0/16 ip daddr 192.0.2.10 accept
+        ip saddr 192.0.2.10 ip daddr 203.0.113.10 tcp dport 443 accept
+    }
+}

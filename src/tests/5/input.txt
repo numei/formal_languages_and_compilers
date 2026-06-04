@@ -1,7 +1,8 @@
-table ip filter {  
-    chain forward {  
+table ip id_filter {
+    chain forward_chain {
         type filter hook forward priority 0; policy drop;  
   
-        ip saddr 10.0.0.1 ip daddr 20.0.0.1 accept  
+        ip id 100 ip saddr 10.0.0.1 ip daddr 20.0.0.1 accept
+        ip id 101 ip saddr 10.0.0.2 ip daddr 20.0.0.2 drop
     }  
 }
