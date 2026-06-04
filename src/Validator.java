@@ -84,5 +84,23 @@ public class Validator {
         }
         return true;
     }
+
+    public static boolean isValidIPv4Range(String range) {
+        String[] parts = range.split("-");
+        return parts.length == 2 && isValidIPv4Range(parts[0], parts[1]);
+    }
+
+    public static boolean isValidIPv4Range(String start, String end) {
+        if (!isValidIPv4Addres(start) || !isValidIPv4Addres(end)) return false;
+        return toIPv4Long(start) <= toIPv4Long(end);
+    }
+
+    private static long toIPv4Long(String ip) {
+        String[] parts = ip.split("\\.");
+        long result = 0;
+        for (String part : parts) {
+            result = (result << 8) + Integer.parseInt(part);
+        }
+        return result;
+    }
 }
-    

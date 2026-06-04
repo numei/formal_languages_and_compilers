@@ -36,12 +36,12 @@ action code {:
 
 
 // Terminals
-terminal LBRACE, RBRACE, SEMICOLON;
+terminal LBRACE, RBRACE, SEMICOLON, COMMA, DASH;
 terminal TABLE,ADDRESS_FAMILY;
 terminal CHAIN,TYPE,TYPE_VAL, HOOK,HOOK_VAL, PRIORITY, POLICY,ACTION;
 terminal ID,SADDR,DADDR,SPORT,DPORT,PROTOCOL;
 terminal Integer NUMBER;
-terminal String NAME,IP_CIDR, IP_RAW;
+terminal String NAME,IP_CIDR, IP_RAW, IP_RANGE;
 
 
 // Non-terminals
@@ -54,7 +54,7 @@ non terminal Chain chain;
 non terminal Chain[] chains;
 non terminal Table table;
 non terminal Table[] tables;
-non terminal String ip_address,statements;
+non terminal String ip_address,statements,daddr_address,daddr_items,daddr_item,daddr_suffix;
 
 
 // Grammar rules
@@ -160,7 +160,7 @@ match ::= ADDRESS_FAMILY SADDR ip_address:ip   {:
                 list.add(new Param("saddr", ip));
                 RESULT = list; 
             :}
-        | ADDRESS_FAMILY DADDR ip_address:ip   {: 
+        | ADDRESS_FAMILY DADDR daddr_address:ip   {: 
                 ArrayList<Param> list = new ArrayList<>(1);
                 list.add(new Param("daddr", ip));
                 RESULT = list; 
@@ -183,6 +183,56 @@ match ::= ADDRESS_FAMILY SADDR ip_address:ip   {:
                 RESULT = list; 
             :}
         ;
+
+
+daddr_address ::= daddr_item:item {: RESULT = item; :}
+                | LBRACE daddr_items:items RBRACE {:
+                    RESULT = items == null ? null : "{" + items + "}";
+                :}
+                ;
+
+daddr_items ::= daddr_items:items COMMA daddr_item:item {:
+                    RESULT = (items == null || item == null) ? null : items + "," + item;
+                :}
+              | daddr_item:item {: RESULT = item; :}
+              ;
+
+daddr_item ::= IP_CIDR:cidr {:
+                    if(Validator.isValidIpv4CIDR(cidr)) {
+                        RESULT = cidr;
+                    } else {
+                        report_error("Invalid IP address: " + cidr, parser.cur_token);
+                        RESULT = null;
+                    }
+                :}
+             | IP_RANGE:range {:
+                    if(Validator.isValidIPv4Range(range)) {
+                        RESULT = range;
+                    } else {
+                        report_error("Invalid IP range: " + range, parser.cur_token);
+                        RESULT = null;
+                    }
+                :}
+             | IP_RAW:start daddr_suffix:end {:
+                    if(end == null) {
+                        if(Validator.isValidIPv4Addres(start)) {
+                            RESULT = start;
+                        } else {
+                            report_error("Invalid IP address: " + start, parser.cur_token);
+                            RESULT = null;
+                        }
+                    } else if(Validator.isValidIPv4Range(start, end)) {
+                        RESULT = start + "-" + end;
+                    } else {
+                        report_error("Invalid IP range: " + start + "-" + end, parser.cur_token);
+                        RESULT = null;
+                    }
+                :}
+             ;
+
+daddr_suffix ::= DASH IP_RAW:end {: RESULT = end; :}
+               | /*empty*/ {: RESULT = null; :}
+               ;
 
 
 ip_address ::= IP_CIDR:cidr {: 

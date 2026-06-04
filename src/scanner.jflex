@@ -14,8 +14,10 @@ comment = "#" [^\n]*
 name = [a-zA-Z_][a-zA-Z0-9_]* 
 number = \-?[0-9]+
 
-ipv4 = {number}"."{number}"."{number}"."{number}
+octet = [0-9]+
+ipv4 = {octet}"."{octet}"."{octet}"."{octet}
 cidr = {ipv4}"/"{number}
+ip_range = {ipv4}"-"{ipv4}
 protocol = "tcp" | "udp" | "udplite" | "sctp"| "dccp"
 hook="prerouting"| "input"|"output"| "postrouting"| "forward"
 type="filter"| "nat"| "route"
@@ -53,10 +55,13 @@ action="drop" | "accept"
 
 // Symbols
 ";"        { return symbol(sym.SEMICOLON); }
+"-"        { return symbol(sym.DASH); }
+","        { return symbol(sym.COMMA); }
 "{"        { return symbol(sym.LBRACE); }
 "}"        { return symbol(sym.RBRACE); }
 
 
+{ip_range} { return symbol(sym.IP_RANGE, yytext()); }
 {cidr}     { return symbol(sym.IP_CIDR, yytext()); }
 {ipv4}     { return symbol(sym.IP_RAW, yytext()); }
 {number}   { return symbol(sym.NUMBER, Integer.valueOf(yytext())); }

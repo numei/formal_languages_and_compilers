@@ -1,0 +1,16 @@
+<node functional_type="FIREWALL" name="edge_firewall">
+    <configuration name="test">
+        <firewall defaultAction="DENY">
+            <elements>
+                <action>ALLOW</action>
+                <source>10.0.1.0/24</source>
+                <destination>{192.168.1.100,192.168.1.101,192.168.1.110-192.168.1.120}</destination>
+            </elements>
+            <elements>
+                <action>DENY</action>
+                <source>10.0.2.0/24</source>
+                <destination>172.16.0.1-172.16.0.10</destination>
+            </elements>
+        </firewall>
+    </configuration>
+</node>

@@ -6,37 +6,42 @@
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int POLICY = 13;
+  public static final int POLICY = 15;
   public static final int SEMICOLON = 4;
   public static final int RBRACE = 3;
-  public static final int PROTOCOL = 20;
-  public static final int TYPE_VAL = 9;
-  public static final int CHAIN = 7;
-  public static final int NAME = 22;
-  public static final int IP_CIDR = 23;
-  public static final int ADDRESS_FAMILY = 6;
+  public static final int PROTOCOL = 22;
+  public static final int TYPE_VAL = 11;
+  public static final int CHAIN = 9;
+  public static final int NAME = 24;
+  public static final int IP_CIDR = 25;
+  public static final int ADDRESS_FAMILY = 8;
   public static final int LBRACE = 2;
-  public static final int HOOK_VAL = 11;
-  public static final int ID = 15;
-  public static final int TABLE = 5;
-  public static final int PRIORITY = 12;
-  public static final int TYPE = 8;
-  public static final int NUMBER = 21;
+  public static final int ID = 17;
+  public static final int HOOK_VAL = 13;
+  public static final int TABLE = 7;
+  public static final int IP_RANGE = 27;
+  public static final int PRIORITY = 14;
+  public static final int TYPE = 10;
+  public static final int COMMA = 5;
+  public static final int NUMBER = 23;
   public static final int EOF = 0;
-  public static final int DADDR = 17;
-  public static final int DPORT = 19;
+  public static final int DADDR = 19;
+  public static final int DPORT = 21;
   public static final int error = 1;
-  public static final int HOOK = 10;
-  public static final int ACTION = 14;
-  public static final int IP_RAW = 24;
-  public static final int SADDR = 16;
-  public static final int SPORT = 18;
+  public static final int HOOK = 12;
+  public static final int ACTION = 16;
+  public static final int DASH = 6;
+  public static final int IP_RAW = 26;
+  public static final int SADDR = 18;
+  public static final int SPORT = 20;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
   "LBRACE",
   "RBRACE",
   "SEMICOLON",
+  "COMMA",
+  "DASH",
   "TABLE",
   "ADDRESS_FAMILY",
   "CHAIN",
@@ -56,7 +61,8 @@ public class sym {
   "NUMBER",
   "NAME",
   "IP_CIDR",
-  "IP_RAW"
+  "IP_RAW",
+  "IP_RANGE"
   };
 }
 
