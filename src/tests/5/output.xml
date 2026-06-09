@@ -1,0 +1,18 @@
+<node functional_type="FIREWALL" name="id_filter">
+    <configuration name="test">
+        <firewall defaultAction="DENY">
+            <elements>
+                <id>9223372036854775807</id>
+                <action>ALLOW</action>
+                <source>10.0.0.1</source>
+                <destination>20.0.0.1</destination>
+            </elements>
+            <elements>
+                <id>101</id>
+                <action>DENY</action>
+                <source>10.0.0.2</source>
+                <destination>20.0.0.2</destination>
+            </elements>
+        </firewall>
+    </configuration>
+</node>

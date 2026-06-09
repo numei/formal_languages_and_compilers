@@ -247,7 +247,7 @@ statements ::= nft_verdict:act rule_end {: RESULT = Validator.mapNftVerdictToAct
              | SEMICOLON {: RESULT = null; :}
              | /*empty*/ {: RESULT = null; :} %prec RBRACE
              ;
-
+//delete
 nft_verdict ::= ACTION:act {: RESULT = (String)act; :}
               | QUEUE:act {: RESULT = act; :}
               ;

@@ -2,7 +2,7 @@ table ip recovery_daddr {
     chain forward_chain {
         type filter hook forward priority 0; policy drop;
 
-        ip saddr 10.0.0.1 ip daddr { 192.168.1.1, } accept
+        ip saddr 10 ip daddr 192.168.1.1 accept 
         ip saddr 10.0.0.2 ip daddr 192.168.1.2 accept
     }
 }

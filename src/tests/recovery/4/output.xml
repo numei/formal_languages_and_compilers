@@ -1,0 +1,11 @@
+<node functional_type="FIREWALL" name="recovery_table">
+    <configuration name="test">
+        <firewall defaultAction="ALLOW">
+            <elements>
+                <action>DENY</action>
+                <source>10.0.3.2</source>
+                <destination>192.168.4.2</destination>
+            </elements>
+        </firewall>
+    </configuration>
+</node>

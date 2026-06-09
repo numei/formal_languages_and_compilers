@@ -1,0 +1,22 @@
+<node functional_type="FIREWALL" name="port_filter">
+    <configuration name="test">
+        <firewall defaultAction="DENY">
+            <elements>
+                <action>ALLOW</action>
+                <source>172.16.0.5</source>
+                <destination>8.8.8.8</destination>
+                <protocol>UDP</protocol>
+                <src_port>5353</src_port>
+                <dst_port>53</dst_port>
+            </elements>
+            <elements>
+                <action>DENY</action>
+                <source>172.16.0.6</source>
+                <destination>1.1.1.1</destination>
+                <protocol>TCP</protocol>
+                <src_port>443</src_port>
+                <dst_port>8443</dst_port>
+            </elements>
+        </firewall>
+    </configuration>
+</node>

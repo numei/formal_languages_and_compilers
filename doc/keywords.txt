@@ -1,57 +1,92 @@
-nftables                          →  XML  
-─────────────────────────────────────────────────────  
-table ip <name>                   →  node (name IP/table name)  
-chain + hook forward              →  functional_type="FIREWALL"  
-policy drop                       →  defaultAction="DENY"  
-policy accept                     →  defaultAction="ALLOW"  
-one rule                          →  one <elements>  
-accept                            →  <action>ALLOW</action>  
-drop                              →  <action>DENY</action>  
-ip saddr X                        →  <source>X</source>  
-ip daddr X                        →  <destination>X</destination>  
-tcp/udp                           →  <protocol>TCP/UDP</protocol>  
-no protocol                       →  <protocol>ANY</protocol>  
-tcp/udp sport X                   →  <src_port>X</src_port>  
-tcp/udp dport X                   →  <dst_port>X</dst_port>  
-no port                           →  <src_port>*</src_port>  
-ip saddr X masquerade (nat)       →  <nat><source>X</source></nat> 
+Supported nftables subset and XML mapping
+=========================================
+
+This project recognizes a small, end-to-end subset of nftables syntax and
+translates it to XML that conforms to xsd/verigraph.xsd. The input must remain
+valid nftables-style syntax; XML/XSD names such as ALLOW, DENY, ALLOW_COND, and
+directional are not accepted as input keywords.
 
 
+Top-level structure
+-------------------
 
-1.table & chain -> node
+nftables syntax                                      XML output
+--------------------------------------------------  ---------------------------
+table ip <table_name> { ... }                       <node name="<table_name>">
+table ip "<table name>" { ... }                     <node name="<table name>">
+chain <chain_name> { ... }                          <configuration name="test">
+type filter                                         supports firewall output only
+hook input|output|forward|prerouting|postrouting    parsed as nftables metadata
+priority <number>                                   validated against known priorities
+policy accept;                                      <firewall defaultAction="ALLOW">
+policy drop;                                        <firewall defaultAction="DENY">
+no policy                                           <firewall> without defaultAction
 
-table ip <table_name> {  
-    chain <chain_name> {  
-        type filter hook forward priority 0; policy drop;  
-        ...rules...  
-    }  
-}  
-table ip → Node's Network layer(only support IPv4)
-chain + hook forward →  FIREWALL Node
-policy drop → defaultAction="DENY"
-policy accept → defaultAction="ALLOW"
+Current XML schema limitation:
+- The generated XML root is one <node>.
+- The <node> schema allows at most one <configuration>.
+- If the input contains extra tables or chains, the parser reports an [XSD]
+  warning and keeps the first valid one so that the generated XML remains valid.
 
-2.rules -> <elements>
 
-src/dest IP
-ip saddr <addr>          # IP: 10.0.0.1  
-ip daddr <addr>          Ibid.
-ip saddr <cidr>          # CIDR: 192.168.1.0/24  
-ip daddr <cidr>          Ibid.
-  
-# protocol 
-ip protocol tcp  
-ip protocol udp  
-# no protocol → ANY  
-  
-src_port/dst_port  
-tcp sport <port>  
-tcp dport <port>  
-udp sport <port>  
-udp dport <port>  
-# no port → *  
-  
-# action 
-accept                   # → ALLOW  
-drop                     # → DENY
+Rule structure
+--------------
 
+Each valid rule maps to one <elements> block.
+
+nftables syntax                                      XML output
+--------------------------------------------------  ---------------------------
+ip saddr <ipv4>                                     <source>...</source>
+ip saddr <ipv4>/<prefix>                            <source>...</source>
+ip saddr <ipv4>-<ipv4>                              <source>...</source>
+ip saddr { <addr>, <addr>, <range> }                <source>{...}</source>
+ip daddr <ipv4>                                     <destination>...</destination>
+ip daddr <ipv4>/<prefix>                            <destination>...</destination>
+ip daddr <ipv4>-<ipv4>                              <destination>...</destination>
+ip daddr { <addr>, <addr>, <range> }                <destination>{...}</destination>
+ip id <number>                                      <id>...</id>
+tcp sport <number>                                  <protocol>TCP</protocol> + <src_port>...</src_port>
+tcp dport <number>                                  <protocol>TCP</protocol> + <dst_port>...</dst_port>
+udp sport <number>                                  <protocol>UDP</protocol> + <src_port>...</src_port>
+udp dport <number>                                  <protocol>UDP</protocol> + <dst_port>...</dst_port>
+accept                                              <action>ALLOW</action>
+drop                                                <action>DENY</action>
+queue                                               <action>ALLOW_COND</action>
+no action                                           no <action>; XSD default DENY applies
+no protocol                                         no <protocol>; XSD default ANY applies
+no ports                                            no <src_port>/<dst_port> elements
+
+
+Notes on XML-only fields
+------------------------
+
+ALLOW_COND:
+- The XSD action value ALLOW_COND is not an nftables keyword.
+- The project maps the valid nftables verdict queue to ALLOW_COND:
+  queue -> <action>ALLOW_COND</action>
+
+directional:
+- The XSD field <directional> has no direct keyword in the supported nftables
+  subset.
+- The translator does not parse a directional keyword and does not emit a
+  <directional> element.
+- The XML relies on the XSD default value true.
+
+priority inside <elements>:
+- The XSD allows an optional per-rule <priority>.
+- The supported nftables subset only parses chain priority from the chain
+  header. It does not emit per-rule <priority>.
+
+
+Accepted examples
+-----------------
+
+table ip edge_firewall {
+    chain forward_chain {
+        type filter hook forward priority 0; policy drop;
+
+        ip saddr 10.0.1.0/24 ip daddr 192.168.1.100 tcp dport 443 accept
+        ip saddr 10.0.2.0/24 ip daddr { 172.16.0.1, 172.16.0.2 } queue
+        ip saddr 192.0.2.10 ip daddr 203.0.113.10;
+    }
+}

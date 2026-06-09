@@ -1,0 +1,11 @@
+<node functional_type="FIREWALL" name="first_table">
+    <configuration name="test">
+        <firewall defaultAction="DENY">
+            <elements>
+                <action>ALLOW</action>
+                <source>10.0.6.1</source>
+                <destination>192.168.6.1</destination>
+            </elements>
+        </firewall>
+    </configuration>
+</node>

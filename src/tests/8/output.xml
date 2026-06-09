@@ -1,0 +1,15 @@
+<node functional_type="FIREWALL" name="output_filter">
+    <configuration name="test">
+        <firewall>
+            <elements>
+                <source>10.1.0.0/16</source>
+                <destination>192.0.2.10</destination>
+            </elements>
+            <elements>
+                <source>192.0.2.10</source>
+                <destination>203.0.113.10</destination>
+                <dst_port>443</dst_port>
+            </elements>
+        </firewall>
+    </configuration>
+</node>

@@ -26,16 +26,16 @@ fi
 
 total=0
 success=0
-TEST_OUTPUT_DIR="$(mktemp -d "${TMPDIR:-/tmp}/compiler-tests.XXXXXX")"
-trap 'rm -rf "$TEST_OUTPUT_DIR"' EXIT
 
 run_test() {
     local test_name="$1"
     local input_file="$2"
-    local output_file="$TEST_OUTPUT_DIR/${test_name//\//_}.xml"
+    local output_file
+    output_file="$(dirname "$input_file")/output.xml"
 
     total=$((total + 1))
     echo "Running test $test_name..."
+    rm -f "$output_file"
     if [[ -f "$input_file" ]] &&
         java -cp "$CP" Main "$input_file" "$output_file" &&
         xmllint --noout --schema "$XSD_FILE" "$output_file"; then

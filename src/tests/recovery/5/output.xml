@@ -1,0 +1,11 @@
+<node functional_type="FIREWALL" name="multi_chain_limit">
+    <configuration name="test">
+        <firewall defaultAction="DENY">
+            <elements>
+                <action>ALLOW</action>
+                <source>10.0.5.1</source>
+                <destination>192.168.5.1</destination>
+            </elements>
+        </firewall>
+    </configuration>
+</node>

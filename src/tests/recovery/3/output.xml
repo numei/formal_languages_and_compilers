@@ -1,0 +1,11 @@
+<node functional_type="FIREWALL" name="recovery_chain">
+    <configuration name="test">
+        <firewall defaultAction="DENY">
+            <elements>
+                <action>ALLOW</action>
+                <source>10.0.2.2</source>
+                <destination>192.168.3.2</destination>
+            </elements>
+        </firewall>
+    </configuration>
+</node>

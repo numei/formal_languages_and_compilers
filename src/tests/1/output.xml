@@ -1,0 +1,14 @@
+<node functional_type="FIREWALL" name="edge_firewall">
+    <configuration name="test">
+        <firewall defaultAction="DENY">
+            <elements>
+                <action>ALLOW</action>
+                <source>10.0.1.0/24</source>
+                <destination>192.168.1.100</destination>
+                <protocol>TCP</protocol>
+                <src_port>1024</src_port>
+                <dst_port>443</dst_port>
+            </elements>
+        </firewall>
+    </configuration>
+</node>

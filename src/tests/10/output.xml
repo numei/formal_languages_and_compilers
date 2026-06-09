@@ -1,0 +1,18 @@
+<node functional_type="FIREWALL" name="route_filter">
+    <configuration name="test">
+        <firewall defaultAction="ALLOW">
+            <elements>
+                <id>7</id>
+                <action>ALLOW</action>
+                <source>127.0.0.1</source>
+                <destination>127.0.0.1</destination>
+            </elements>
+            <elements>
+                <action>DENY</action>
+                <source>10.10.10.10</source>
+                <destination>{172.20.0.1,172.20.0.2}</destination>
+                <dst_port>500</dst_port>
+            </elements>
+        </firewall>
+    </configuration>
+</node>

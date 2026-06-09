@@ -1,0 +1,24 @@
+<node functional_type="FIREWALL" name="dns filter">
+    <configuration name="test">
+        <firewall defaultAction="DENY">
+            <elements>
+                <action>ALLOW</action>
+                <source>192.168.1.0/24</source>
+                <destination>10.0.0.1</destination>
+                <dst_port>53</dst_port>
+            </elements>
+            <elements>
+                <action>ALLOW</action>
+                <source>192.168.1.0/24</source>
+                <destination>10.0.0.1</destination>
+                <dst_port>53</dst_port>
+            </elements>
+            <elements>
+                <action>ALLOW</action>
+                <source>192.168.1.0/24</source>
+                <destination>10.0.0.1</destination>
+                <dst_port>22</dst_port>
+            </elements>
+        </firewall>
+    </configuration>
+</node>
