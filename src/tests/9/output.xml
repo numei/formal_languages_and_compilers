@@ -2,7 +2,7 @@
     <configuration name="test">
         <firewall defaultAction="DENY">
             <elements>
-                <action>ALLOW_COND</action>
+                <action>ALLOW</action>
                 <source>198.51.100.0/24</source>
                 <destination>{203.0.113.0/28,203.0.113.32/28,203.0.113.100-203.0.113.110}</destination>
             </elements>

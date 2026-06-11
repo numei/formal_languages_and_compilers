@@ -1,0 +1,17 @@
+<node functional_type="FIREWALL" name="recovery_port_range">
+    <configuration name="test">
+        <firewall defaultAction="DENY">
+            <elements>
+                <action>ALLOW</action>
+                <source>10.0.9.1</source>
+                <destination>192.168.9.1</destination>
+            </elements>
+            <elements>
+                <action>ALLOW</action>
+                <source>10.0.9.2</source>
+                <destination>192.168.9.2</destination>
+                <dst_port>443</dst_port>
+            </elements>
+        </firewall>
+    </configuration>
+</node>

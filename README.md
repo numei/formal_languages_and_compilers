@@ -37,7 +37,9 @@ keywords as input syntax.
 ```
 
 Generated files such as `src/parser.java`, `src/sym.java`, `src/scanner.java`,
-compiled `.class` files, and generated XML outputs are ignored by Git.
+compiled `.class` files, and the single-mode `src/output.xml` are ignored by
+Git. Test case XML files under `src/tests/**/output.xml` are explicit expected
+artifacts and can be committed.
 
 ## Requirements
 
@@ -75,7 +77,7 @@ The current implementation supports:
 - address sets such as `{ 192.168.1.10, 192.168.1.20 }`
 - optional `ip id <number>`
 - TCP/UDP `sport` and `dport`
-- rule verdicts: `accept`, `drop`, and `queue`
+- rule verdicts: `accept`, `drop`
 - optional rule action, relying on the XSD default when omitted
 
 The mapping from nftables syntax to XML tags is documented in
@@ -85,9 +87,6 @@ Important mapping notes:
 
 - `accept` maps to XML action `ALLOW`
 - `drop` maps to XML action `DENY`
-- `queue` maps to XML action `ALLOW_COND`
-- `directional` is not an nftables keyword in this subset; the generated XML
-  omits it and relies on the XSD default value `true`
 
 ## How to Run
 
@@ -117,6 +116,15 @@ Run only the default single input file:
 ```
 
 Single mode reads `src/input.txt` and writes `src/output.xml`.
+
+Convert multiple nftables files in one command:
+
+```bash
+./bash.sh --files path/to/a.nft path/to/b.nft
+```
+
+For each input file, the script writes an XML file next to it using the same
+base name. For example, `path/to/a.nft` becomes `path/to/a.xml`.
 
 ### Windows
 
@@ -193,6 +201,7 @@ See `doc/invalid_syntax_recovery.md` for details.
 ## Documentation
 
 - `doc/keywords.txt`: supported nftables keywords and XML tag mapping
+- `doc/grammar_and_lexer.md`: CUP grammar and JFlex lexer explanation
 - `doc/invalid_syntax_recovery.md`: how invalid syntax recovery is handled
 - `doc/Context.md`: text version of the assignment brief and questions
 

@@ -50,12 +50,11 @@ parser code {:
     public void syntax_error(Symbol cur_token) {
         syntaxErrorCount++;
         System.err.println("[SYNTAX] " + location(cur_token) + ": unexpected " + tokenText(cur_token));
-        System.err.println("[EXPECTED] firewall rule: ip saddr <ipv4|cidr> ip daddr <ipv4|cidr|range|set> [tcp|udp sport <number>] [tcp|udp dport <number>] [accept|drop|queue]");
-        System.err.println("[XSD] current output maps nftables verdicts to XML actions: accept->ALLOW, drop->DENY, queue->ALLOW_COND; directional uses the XSD default true");
+        System.err.println("[EXPECTED] rule: ip saddr <addr> ip daddr <addr> [tcp|udp sport|dport <port>] [accept|drop]");
     }
 
     public void unrecovered_syntax_error(Symbol cur_token) throws Exception {
-        report_error("Unrecoverable syntax error near " + tokenText(cur_token), cur_token);
+        report_error("unrecoverable near " + tokenText(cur_token), cur_token);
     }
 :}
 
@@ -83,7 +82,7 @@ terminal TABLE,ADDRESS_FAMILY;
 terminal CHAIN,TYPE,TYPE_VAL, HOOK,HOOK_VAL, PRIORITY, POLICY,ACTION;
 terminal ID,SADDR,DADDR,SPORT,DPORT,PROTOCOL;
 terminal Long NUMBER;
-terminal String NAME,STRING,IP_CIDR, IP_RAW, IP_RANGE, QUEUE;
+terminal String NAME,STRING,IP_CIDR, IP_RAW, IP_RANGE;
 
 
 // Non-terminals
@@ -125,7 +124,7 @@ tables ::= /*empty*/ {: RESULT = null; :}  | tables: ts table:t
                     System.arraycopy(ts, 0, combined, 0, ts.length);
                     RESULT = combined;
                 */
-                report_constraint("Only one table is supported because the generated XML root is one <node>. Ignoring extra table.", new Symbol(0, tleft, tright));
+                report_constraint("only one table is supported; ignoring extra table", new Symbol(0, tleft, tright));
                 RESULT = ts;
             }
          :}
@@ -134,8 +133,8 @@ table::= TABLE ADDRESS_FAMILY name_value:name LBRACE chains:cs RBRACE{:
             RESULT = new Table((String)name, (Chain[])cs);
         :}
         | TABLE error RBRACE {:
-            report_syntax("table ip <table_name|string_name> { chain <chain_name|string_name> { ... } }", parser.cur_token);
-            report_constraint("A table maps to <node>.", parser.cur_token);
+            report_syntax("table ip <name> { chain <name> { ... } }", parser.cur_token);
+            report_constraint("table maps to <node>", parser.cur_token);
             RESULT = null;
         :}
         ;
@@ -146,7 +145,7 @@ chains::= /*empty*/ {: RESULT = null; :}  | chains: cs chain:c
             } else if (cs == null) {
                 RESULT = new Chain[]{(Chain)c};
             } else {
-                report_constraint("Only one chain is supported per table because <node> allows one <configuration>. Ignoring extra chain.", new Symbol(0, cleft, cright));
+                report_constraint("only one chain is supported; ignoring extra chain", new Symbol(0, cleft, cright));
                 RESULT = cs;
             }
          :}
@@ -157,25 +156,25 @@ chain ::= CHAIN name_value:name LBRACE TYPE TYPE_VAL: type_val HOOK HOOK_VAL:hoo
             if(Validator.isValidPriority(priority_val)) {
                 RESULT = new Chain((String)name, (String)type_val, (String)hook_val, priority_val,policy_val, (FirewallElement[])rs);
             } else {
-                report_error("Invalid priority: " + String.valueOf(priority_val),parser.cur_token);
+                report_error("invalid priority: " + String.valueOf(priority_val),parser.cur_token);
                 RESULT = null;
             }
         :}
         | CHAIN name_value:name LBRACE TYPE TYPE_VAL: type_val HOOK HOOK_VAL:hook_val PRIORITY NUMBER:priority_val SEMICOLON chain_policy:policy_val rules:rs error RBRACE
          {:
-            report_syntax("ip saddr <source> ip daddr <destination> [protocol port] [accept|drop|queue]", parser.cur_token);
-            report_constraint("Each valid rule maps to one <elements>.", parser.cur_token);
+            report_syntax("rule: ip saddr <addr> ip daddr <addr> [accept|drop]", parser.cur_token);
+            report_constraint("rule maps to <elements>", parser.cur_token);
             if(Validator.isValidPriority(priority_val)) {
                 RESULT = new Chain((String)name, (String)type_val, (String)hook_val, priority_val,policy_val, (FirewallElement[])rs);
             } else {
-                report_error("Invalid priority: " + String.valueOf(priority_val),parser.cur_token);
+                report_error("invalid priority: " + String.valueOf(priority_val),parser.cur_token);
                 RESULT = null;
             }
         :}
         | CHAIN name_value:name LBRACE error RBRACE
          {:
-            report_syntax("chain <name|string_name> { type filter hook <hook> priority <number>; [policy <accept|drop>;] ... }", parser.cur_token);
-            report_constraint("A chain maps to <configuration>/<firewall>; only one chain is supported per table.", parser.cur_token);
+            report_syntax("chain <name> { type filter hook <hook> priority <number>; ... }", parser.cur_token);
+            report_constraint("chain maps to one <configuration>", parser.cur_token);
             RESULT = null;
          :}
         ;
@@ -203,17 +202,12 @@ rules ::= /*empty*/ {: RESULT = null; :}  | rules:rs rule:r
         :}
         | rules:rs error ACTION
          {:
-            report_syntax("ip saddr <source> ip daddr <destination> [protocol port] [accept|drop|queue]", parser.cur_token);
-            RESULT = rs;
-         :}
-        | rules:rs error QUEUE
-         {:
-            report_syntax("ip saddr <source> ip daddr <destination> [protocol port] [accept|drop|queue]", parser.cur_token);
+            report_syntax("rule: ip saddr <addr> ip daddr <addr> [accept|drop]", parser.cur_token);
             RESULT = rs;
          :}
         | rules:rs error SEMICOLON
          {:
-            report_syntax("ip saddr <source> ip daddr <destination> [protocol port] [accept|drop|queue];", parser.cur_token);
+            report_syntax("rule: ip saddr <addr> ip daddr <addr> [accept|drop];", parser.cur_token);
             RESULT = rs;
          :}
         ;
@@ -234,8 +228,8 @@ rule ::= matches:ms statements:stmts
                 }
             }
             if (firewall.getSource() == null || firewall.getDestination() == null) {
-                report_error("Missing source or destination IP address", parser.cur_token);
-                report_constraint("Each <elements> must contain <source> and <destination>.", parser.cur_token);
+                report_error("missing source or destination", parser.cur_token);
+                report_constraint("<elements> requires source and destination", parser.cur_token);
                 RESULT = null;
             } else {
                 RESULT = firewall;
@@ -247,9 +241,8 @@ statements ::= nft_verdict:act rule_end {: RESULT = Validator.mapNftVerdictToAct
              | SEMICOLON {: RESULT = null; :}
              | /*empty*/ {: RESULT = null; :} %prec RBRACE
              ;
-//delete
+
 nft_verdict ::= ACTION:act {: RESULT = (String)act; :}
-              | QUEUE:act {: RESULT = act; :}
               ;
 
 rule_end ::= SEMICOLON {: RESULT = null; :}
@@ -281,31 +274,39 @@ match ::= ADDRESS_FAMILY SADDR ip_address:ip   {:
         | PROTOCOL:protocol SPORT NUMBER:num
             {:
                 ArrayList<Param> list = new ArrayList<>(2);
-                list.add(new Param("protocol", (String)protocol));
-                list.add(new Param("sport", String.valueOf(num)));
+                if (Validator.isValidPort(num)) {
+                    list.add(new Param("protocol", (String)protocol));
+                    list.add(new Param("sport", String.valueOf(num)));
+                } else {
+                    report_error("invalid port: " + String.valueOf(num), parser.cur_token);
+                }
                 RESULT = list;
             :}
         | PROTOCOL DPORT NUMBER:num{:
                 ArrayList<Param> list = new ArrayList<>(1);
-                list.add(new Param("dport", String.valueOf(num)));
+                if (Validator.isValidPort(num)) {
+                    list.add(new Param("dport", String.valueOf(num)));
+                } else {
+                    report_error("invalid port: " + String.valueOf(num), parser.cur_token);
+                }
                 RESULT = list;
             :}
         | ADDRESS_FAMILY SADDR error {:
-                report_syntax("ip saddr <ipv4|cidr|ipv4-ipv4|{item,item}>", parser.cur_token);
-                report_constraint("saddr maps to required <source>.", parser.cur_token);
+                report_syntax("ip saddr <addr>", parser.cur_token);
+                report_constraint("saddr maps to <source>", parser.cur_token);
                 RESULT = new ArrayList<Param>();
             :}
         | ADDRESS_FAMILY DADDR error {:
-                report_syntax("ip daddr <ipv4|cidr|ipv4-ipv4|{item,item}>", parser.cur_token);
-                report_constraint("daddr maps to required <destination>.", parser.cur_token);
+                report_syntax("ip daddr <addr>", parser.cur_token);
+                report_constraint("daddr maps to <destination>", parser.cur_token);
                 RESULT = new ArrayList<Param>();
             :}
         | PROTOCOL SPORT error {:
-                report_syntax("<tcp|udp> sport <number>", parser.cur_token);
+                report_syntax("<tcp|udp> sport <port>", parser.cur_token);
                 RESULT = new ArrayList<Param>();
             :}
         | PROTOCOL DPORT error {:
-                report_syntax("<tcp|udp> dport <number>", parser.cur_token);
+                report_syntax("<tcp|udp> dport <port>", parser.cur_token);
                 RESULT = new ArrayList<Param>();
             :}
         ;
@@ -316,8 +317,8 @@ ip_address ::= addr_item:item {: RESULT = item; :}
                     RESULT = items == null ? null : "{" + items + "}";
                 :}
                 | LBRACE error RBRACE {:
-                    report_syntax("ip addr { <ipv4|cidr|range>, ... }", parser.cur_token);
-                    report_constraint("addr set is serialized as <destination> text.", parser.cur_token);
+                    report_syntax("ip addr { <addr>, ... }", parser.cur_token);
+                    report_constraint("address set maps to XML text", parser.cur_token);
                     RESULT = null;
                 :}
                 ;
@@ -332,7 +333,7 @@ addr_item ::= IP_CIDR:cidr {:
                     if(Validator.isValidIpv4CIDR(cidr)) {
                         RESULT = cidr;
                     } else {
-                        report_error("Invalid IP address: " + cidr, parser.cur_token);
+                        report_error("invalid cidr: " + cidr, parser.cur_token);
                         RESULT = null;
                     }
                 :}
@@ -340,7 +341,7 @@ addr_item ::= IP_CIDR:cidr {:
                     if(Validator.isValidIPv4Range(range)) {
                         RESULT = range;
                     } else {
-                        report_error("Invalid IP range: " + range, parser.cur_token);
+                        report_error("invalid ipv4 range: " + range, parser.cur_token);
                         RESULT = null;
                     }
                 :}
@@ -349,13 +350,13 @@ addr_item ::= IP_CIDR:cidr {:
                         if(Validator.isValidIPv4Addres(start)) {
                             RESULT = start;
                         } else {
-                            report_error("Invalid IP address: " + start, parser.cur_token);
+                            report_error("invalid ipv4: " + start, parser.cur_token);
                             RESULT = null;
                         }
                     } else if(Validator.isValidIPv4Range(start, end)) {
                         RESULT = start + "-" + end;
                     } else {
-                        report_error("Invalid IP range: " + start + "-" + end, parser.cur_token);
+                        report_error("invalid ipv4 range: " + start + "-" + end, parser.cur_token);
                         RESULT = null;
                     }
                 :}

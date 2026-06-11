@@ -24,7 +24,6 @@ hook="prerouting"| "input"|"output"| "postrouting"| "forward"
 type="filter"
 address_family="ip"
 action="drop" | "accept"
-queue="queue"
 %{
   private Symbol symbol(int type) {
     return new Symbol(type, yyline + 1, yycolumn + 1);
@@ -57,7 +56,6 @@ queue="queue"
 {type}     { return symbol(sym.TYPE_VAL, yytext()); }
 {address_family} { return symbol(sym.ADDRESS_FAMILY, yytext()); }
 {action}   { return symbol(sym.ACTION, yytext()); }
-{queue}    { return symbol(sym.QUEUE, yytext()); }
 
 
 // Symbols
@@ -80,6 +78,6 @@ queue="queue"
 {comment}    { /* ignore */ }
 
 [^] {
-    System.err.println("Lexical Error at Line " + (yyline+1) + ", Column " + (yycolumn+1) +
-                       ": Unrecognized character '" + yytext() + "'");
+    System.err.println("[LEXICAL] line " + (yyline + 1) + ", column " + (yycolumn + 1) +
+                       ": invalid character '" + yytext() + "'");
 }

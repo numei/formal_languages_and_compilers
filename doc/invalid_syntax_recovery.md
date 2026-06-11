@@ -37,15 +37,14 @@ The parser uses a small set of diagnostic labels:
 [EXPECTED] concise syntax pattern expected at that point
 [XSD]      schema-related limitation or XML mapping constraint
 [ERROR]    semantic validation failure, such as an invalid IP range
-[WARNING]  parse completed after one or more recovered errors
+[WARN]     parse completed after one or more recovered errors
 ```
 
 Example:
 
 ```text
 [SYNTAX] line 5, column 52: unexpected RBRACE
-[EXPECTED] firewall rule: ip saddr <ipv4|cidr> ip daddr <ipv4|cidr|range|set> [tcp|udp sport <number>] [tcp|udp dport <number>] [accept|drop|queue]
-[XSD] current output maps nftables verdicts to XML actions: accept->ALLOW, drop->DENY, queue->ALLOW_COND; directional uses the XSD default true
+[EXPECTED] rule: ip saddr <addr> ip daddr <addr> [tcp|udp sport|dport <port>] [accept|drop]
 ```
 
 ## Recovery Cases Covered by Tests
@@ -95,6 +94,34 @@ src/tests/recovery/6/input.txt
 More than one valid table. The generated XML root is one `<node>`, so the parser
 reports an `[XSD]` limitation and keeps the first valid table.
 
+```text
+src/tests/recovery/7/input.txt
+```
+
+Invalid IPv4 address. The parser reports `invalid ipv4` and skips the invalid
+rule.
+
+```text
+src/tests/recovery/8/input.txt
+```
+
+Invalid CIDR prefix. The parser reports `invalid cidr` and skips the invalid
+rule.
+
+```text
+src/tests/recovery/9/input.txt
+```
+
+Invalid TCP/UDP port range. The parser reports `invalid port`; the generated XML
+remains schema-valid.
+
+```text
+src/tests/recovery/10/input.txt
+```
+
+Invalid chain priority. The parser reports `invalid priority`, discards the
+broken chain, and recovers at the next valid chain.
+
 ## Why Some Invalid Inputs Still Produce XML
 
 The translator is designed to preserve the valid part of the input when doing
@@ -114,7 +141,6 @@ Recovery is intentionally limited and deterministic:
 - It does not emit XML/XSD keywords as nftables input.
 - It does not parse a `directional` keyword; the XML relies on the XSD default
   value `true`.
-- It maps the valid nftables verdict `queue` to XML action `ALLOW_COND`.
 
 If parsing cannot produce any valid AST, `Main` exits with a non-zero status and
 does not treat the input as a successful recovery.

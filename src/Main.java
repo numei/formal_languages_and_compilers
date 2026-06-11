@@ -5,9 +5,7 @@ import java.io.*;
 public class Main {
     public static void main(String[] args) {
         if (args.length < 2) {
-            System.err.println("Usage Error!");
-            System.err.println("Please provide input and output file paths.");
-            System.err.println("Example: java Main input.txt output.xml");
+            System.err.println("[ERROR] usage: java Main <input> <output>");
             System.exit(1);
         }
 
@@ -16,7 +14,7 @@ public class Main {
 
         File inputFile = new File(inputFilePath);
         if (!inputFile.exists()) {
-            System.err.println("Error: Cannot find input file -> " + inputFilePath);
+            System.err.println("[ERROR] input not found: " + inputFilePath);
             System.exit(1);
         }
 
@@ -35,16 +33,16 @@ public class Main {
             if (result != null ) { 
                 result.writeXML(writer);
                 if (syntaxErrors > 0) {
-                    System.err.println("[WARNING] Parsing recovered from " + syntaxErrors + " syntax error(s).");
+                    System.err.println("[WARN] recovered errors: " + syntaxErrors);
                 }
                 System.out.println("[SUCCESS] Parsing complete. XML saved to: " + outputFilePath);
             } else {
-                 System.err.println("[WARNING] Parsing finished, but no valid AST was generated.");
+                 System.err.println("[ERROR] no valid AST generated");
                  System.exit(1);
             }
 
         } catch (Exception e) {
-            System.err.println("[ERROR] An exception occurred during execution: " + e.getMessage());
+            System.err.println("[ERROR] " + e.getMessage());
             System.exit(1);
         }
     }

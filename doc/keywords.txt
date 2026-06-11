@@ -3,8 +3,8 @@ Supported nftables subset and XML mapping
 
 This project recognizes a small, end-to-end subset of nftables syntax and
 translates it to XML that conforms to xsd/verigraph.xsd. The input must remain
-valid nftables-style syntax; XML/XSD names such as ALLOW, DENY, ALLOW_COND, and
-directional are not accepted as input keywords.
+valid nftables-style syntax; XML/XSD names such as ALLOW, DENY, and directional
+are not accepted as input keywords.
 
 
 Top-level structure
@@ -51,7 +51,6 @@ udp sport <number>                                  <protocol>UDP</protocol> + <
 udp dport <number>                                  <protocol>UDP</protocol> + <dst_port>...</dst_port>
 accept                                              <action>ALLOW</action>
 drop                                                <action>DENY</action>
-queue                                               <action>ALLOW_COND</action>
 no action                                           no <action>; XSD default DENY applies
 no protocol                                         no <protocol>; XSD default ANY applies
 no ports                                            no <src_port>/<dst_port> elements
@@ -59,11 +58,6 @@ no ports                                            no <src_port>/<dst_port> ele
 
 Notes on XML-only fields
 ------------------------
-
-ALLOW_COND:
-- The XSD action value ALLOW_COND is not an nftables keyword.
-- The project maps the valid nftables verdict queue to ALLOW_COND:
-  queue -> <action>ALLOW_COND</action>
 
 directional:
 - The XSD field <directional> has no direct keyword in the supported nftables
@@ -86,7 +80,7 @@ table ip edge_firewall {
         type filter hook forward priority 0; policy drop;
 
         ip saddr 10.0.1.0/24 ip daddr 192.168.1.100 tcp dport 443 accept
-        ip saddr 10.0.2.0/24 ip daddr { 172.16.0.1, 172.16.0.2 } queue
+        ip saddr 10.0.2.0/24 ip daddr { 172.16.0.1, 172.16.0.2 } drop
         ip saddr 192.0.2.10 ip daddr 203.0.113.10;
     }
 }

@@ -2,7 +2,6 @@ public class Validator {
     public static String mapNftVerdictToAction(String verdict) {
         if ("accept".equals(verdict)) return "ALLOW";
         if ("drop".equals(verdict)) return "DENY";
-        if ("queue".equals(verdict)) return "ALLOW_COND";
         return null;
     }
 
@@ -45,12 +44,8 @@ public class Validator {
     }
 
 
-    public static boolean isValidPort(int port) {
-        try {
-            return port >= 0 && port <= 65535;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+    public static boolean isValidPort(long port) {
+        return port >= 0 && port <= 65535;
     }
 
     public static boolean isValidIPv4Prefix(String prefix) {

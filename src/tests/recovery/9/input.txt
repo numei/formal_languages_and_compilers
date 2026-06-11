@@ -1,0 +1,8 @@
+table ip recovery_port_range {
+    chain forward_chain {
+        type filter hook forward priority 0; policy drop;
+
+        ip saddr 10.0.9.1 ip daddr 192.168.9.1 tcp dport 70000 accept
+        ip saddr 10.0.9.2 ip daddr 192.168.9.2 tcp dport 443 accept
+    }
+}

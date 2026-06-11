@@ -1,0 +1,8 @@
+table ip recovery_cidr {
+    chain forward_chain {
+        type filter hook forward priority 0; policy drop;
+
+        ip saddr 10.0.8.0/33 ip daddr 192.168.8.1 accept
+        ip saddr 10.0.8.2/32 ip daddr 192.168.8.2 accept
+    }
+}
